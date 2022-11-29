@@ -1,0 +1,46 @@
+---
+title: Welcome to prajwalsuresh.com
+comments: False
+format:
+  html:
+    page-layout: full
+listing:
+  - id: landing-posts
+    contents: posts
+    type: default
+    max-items: 4
+    sort: 
+      - "date desc"
+      - "title asc"
+about:
+  id: about-me
+  template: solana
+  # image: photo_cropped.jpg
+  # image-shape: round
+  links:
+    - icon: linkedin
+      text: LinkedIn
+      href: https://www.linkedin.com/in/prajwal-s-1416061b3/
+    - icon: github
+      text: GitHub
+      href: https://github.com/prajwal-suresh13
+    - icon: envelope
+      text: Email
+      href: mailto:prajwalsuresh13@gmail.com
+---
+
+:::{#about-me}
+Hi there, I'm Prajwal Suresh. I'm currently exploring Deep learning, Machine learning and data engineering technologies. This is where I write about my learning journey and explorations
+
+Read more about me [here](about.qmd).
+:::
+
+:::::{.grid}
+::::{.g-col-12 .g-col-md-12}
+## Latest Blogs
+Click [here](blog.qmd) to check out more blogs.
+
+:::{#landing-posts}
+:::
+::::
+:::::

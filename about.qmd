@@ -1,0 +1,109 @@
+---
+title: "Prajwal Suresh"
+about:
+  template: solana
+  image: photo_cropped.jpg
+  image-width: 10em
+  image-shape: round
+  links:
+    - icon: github
+      text: Github
+      href: https://github.com/prajwal-suresh13
+    - icon: linkedin
+      text: LinkedIn
+      href: https://www.linkedin.com/in/prajwal-s-1416061b3/
+    - icon: envelope
+      text: Email
+      href: mailto:prajwalsuresh13@gmail.com
+comments: false
+page-layout: full
+---
+
+Hi there, I'm Prajwal Suresh. I'm currently exploring Deep learning, machine learning and data engineering technologies. This is where I write about my learning journey and explorations
+
+<!-- I'm an experienced Data Scientist with specialized skills in machine learning-based solutions. I enjoy staying on top of cutting-edge data technologies, including big data platforms, deep learning, optimization methods, and business analytics. My current work involves building data-driven products to enable smarter recommendations for Microsoft Partners, M365 service administrators and end-users to ensure the best usage of M365 services. Before that, I have experience working in various verticals like agricultural technology, pharmaceuticals, retail, e-commerce, and ride-sharing business model. -->
+
+::::{.panel-tabset}
+
+# Experience
+
+::: {.d-flex .justify-content-between}
+::: {}
+**Big Data Engineer**  
+*Tata Consultancy Services Private Limited, Bengaluru, India*
+:::
+::: {.text-end}
+August 2021 - Present
+:::
+:::
+- Managing 275 nodes Hadoop Cloudera cluster, handling 10PiB of data and managing 250+ users effectively
+- Automating tasks using Ansible and project space creation for users
+
+
+# Skills
+
+::: {.d-flex .justify-content-between}
+::: {}
+**Programming**  
+*Python, C++, Java*
+:::
+:::
+
+::: {.d-flex .justify-content-between}
+::: {}
+**Machine Learning**  
+*PyTorch, fastai, Scikit-Learn, Pandas, Numpy, MatplotLib, OpenCV, HuggingFace*
+:::
+:::
+
+::: {.d-flex .justify-content-between}
+::: {}
+**Big Data**  
+*Hadoop, Spark, Docker, Airflow, Cloudera, Cloud, Linux, SQL, Ansible*
+:::
+:::
+
+::: {.d-flex .justify-content-between}
+::: {}
+**Web Development**  
+*Django, Flask, PHP, HTML, CSS, JavaScript*
+:::
+:::
+
+
+# Education
+
+
+::: {.d-flex .justify-content-between}
+::: {}
+**Sapthagiri College of Engineering, Bengaluru, India**  
+*Bachelor of Engineering in Computer Science & Engineering* | **GPA:** 8.55/10
+:::
+::: {.text-end}
+2017-2021
+:::
+:::
+
+::: {.d-flex .justify-content-between}
+::: {}
+**MES PU College of Arts, Commerce & Science, Bengaluru, India**  
+*Pre-University Education* | **Percentage:** 87.16%
+:::
+::: {.text-end}
+2017
+:::
+:::
+
+::: {.d-flex .justify-content-between}
+::: {}
+**St Mary's High School, Bengaluru, India**  
+*Tenth Standard* | **Percentage:** 97.6%
+:::
+::: {.text-end}
+2015
+:::
+:::
+
+
+
+::::

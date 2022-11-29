@@ -1,0 +1,46 @@
+project:
+  type: website
+  output-dir: docs
+website:
+  title: "Prajwal Suresh"
+  site-url: https://prajwalsuresh.com/
+  description: "Prajwal's personal website"
+  repo-url: https://github.com/prajwal-suresh13/prajwal.github.io
+  open-graph: true
+  twitter-card:
+    creator: "@prajwal"
+    card-style: summary_large_image
+  navbar:
+    pinned: True
+    collapse-below: lg
+    left:
+      - icon: house
+        href: index.qmd
+        text: Home
+      - icon: newspaper
+        href: blog.qmd
+        text: Blog
+      - icon: file-person
+        href: about.qmd
+        text: About
+
+    right:
+      - icon: github
+        href: https://github.com/prajwal-suresh13
+      - icon: linkedin
+        href: https://www.linkedin.com/in/prajwal-s-1416061b3/
+      - icon: envelope
+        href: mailto:prajwalsuresh13@gmail.com
+      
+
+format:
+  html:
+    theme: 
+      light: united
+      dark: [vapor, theme-dark.scss]
+    mainfont: Arial
+    css: styles.css
+    toc: true
+
+
+
