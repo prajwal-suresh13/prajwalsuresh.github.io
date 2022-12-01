@@ -1,47 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://prajwalsuresh.com/about.html</loc>
-    <lastmod>2022-12-01T10:40:07.838Z</lastmod>
-  </url>
-  <url>
-    <loc>https://prajwalsuresh.com/blog.html</loc>
-    <lastmod>2022-12-01T11:10:31.021Z</lastmod>
-  </url>
-  <url>
-    <loc>https://prajwalsuresh.com/posts/2022-11-22-StableDiffusionIntro/01_stable_diffusion_introduction.html</loc>
-    <lastmod>2022-12-01T11:06:09.379Z</lastmod>
-  </url>
-  <url>
-    <loc>https://prajwalsuresh.com/posts/2022-11-24-StableDiffusionVariations/02_stable_diffusion_variations.html</loc>
-    <lastmod>2022-12-01T11:10:35.469Z</lastmod>
-  </url>
-  <url>
-    <loc>https://prajwalsuresh.com/posts/2022-11-30-Dreambooth/03_pintu_dreambooth.html</loc>
-    <lastmod>2022-12-01T09:17:15.732Z</lastmod>
-  </url>
-  <url>
-    <loc>https://prajwalsuresh.com/index.html</loc>
-    <lastmod>2022-12-01T11:02:15.321Z</lastmod>
-  </url>
-  <url>
-    <loc>https://prajwalsuresh.com/posts/2022-12-01-Dreambooth/03_pintu_dreambooth.html</loc>
-    <lastmod>2022-12-01T11:03:51.808Z</lastmod>
-  </url>
-  <url>
-    <loc>https://prajwal-suresh13.com/posts/2022-11-24-StableDiffusionVariations/02_stable_diffusion_variations.html</loc>
-    <lastmod>2022-12-01T11:16:23.646Z</lastmod>
-  </url>
-  <url>
-    <loc>https://prajwal-suresh13.com/index.html</loc>
-    <lastmod>2022-12-01T11:51:21.952Z</lastmod>
-  </url>
-  <url>
-    <loc>https://prajwal-suresh13.com/posts/2022-11-22-StableDiffusionIntro/01_stable_diffusion_introduction.html</loc>
-    <lastmod>2022-12-01T11:53:14.691Z</lastmod>
+    <loc>https://prajwal-suresh13.com/about.html</loc>
+    <lastmod>2022-12-01T12:05:10.107Z</lastmod>
   </url>
   <url>
     <loc>https://prajwal-suresh13.com/blog.html</loc>
-    <lastmod>2022-12-01T11:51:21.078Z</lastmod>
+    <lastmod>2022-12-01T12:05:15.066Z</lastmod>
+  </url>
+  <url>
+    <loc>https://prajwal-suresh13.com/posts/2022-11-22-StableDiffusionIntro/01_stable_diffusion_introduction.html</loc>
+    <lastmod>2022-12-01T12:05:18.210Z</lastmod>
+  </url>
+  <url>
+    <loc>https://prajwal-suresh13.com/posts/2022-11-24-StableDiffusionVariations/02_stable_diffusion_variations.html</loc>
+    <lastmod>2022-12-01T12:05:20.064Z</lastmod>
+  </url>
+  <url>
+    <loc>https://prajwal-suresh13.com/posts/2022-12-01-Dreambooth/03_pintu_dreambooth.html</loc>
+    <lastmod>2022-12-01T12:05:22.174Z</lastmod>
+  </url>
+  <url>
+    <loc>https://prajwal-suresh13.com/index.html</loc>
+    <lastmod>2022-12-01T12:05:23.013Z</lastmod>
   </url>
 </urlset>
