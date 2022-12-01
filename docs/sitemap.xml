@@ -2,22 +2,30 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://prajwalsuresh.com/about.html</loc>
-    <lastmod>2022-11-29T14:48:28.126Z</lastmod>
+    <lastmod>2022-12-01T10:40:07.838Z</lastmod>
   </url>
   <url>
     <loc>https://prajwalsuresh.com/blog.html</loc>
-    <lastmod>2022-11-29T14:50:41.539Z</lastmod>
+    <lastmod>2022-12-01T11:10:31.021Z</lastmod>
   </url>
   <url>
     <loc>https://prajwalsuresh.com/posts/2022-11-22-StableDiffusionIntro/01_stable_diffusion_introduction.html</loc>
-    <lastmod>2022-11-29T14:34:25.575Z</lastmod>
+    <lastmod>2022-12-01T11:06:09.379Z</lastmod>
+  </url>
+  <url>
+    <loc>https://prajwalsuresh.com/posts/2022-11-24-StableDiffusionVariations/02_stable_diffusion_variations.html</loc>
+    <lastmod>2022-12-01T11:10:35.469Z</lastmod>
+  </url>
+  <url>
+    <loc>https://prajwalsuresh.com/posts/2022-11-30-Dreambooth/03_pintu_dreambooth.html</loc>
+    <lastmod>2022-12-01T09:17:15.732Z</lastmod>
   </url>
   <url>
     <loc>https://prajwalsuresh.com/index.html</loc>
-    <lastmod>2022-11-29T14:40:52.488Z</lastmod>
+    <lastmod>2022-12-01T11:02:15.321Z</lastmod>
   </url>
   <url>
-    <loc>https://prajwalsuresh.com/posts/2022-11-22-StableDiffusionVariations/02_stable_diffusion_variations.html</loc>
-    <lastmod>2022-11-29T14:45:40.285Z</lastmod>
+    <loc>https://prajwalsuresh.com/posts/2022-12-01-Dreambooth/03_pintu_dreambooth.html</loc>
+    <lastmod>2022-12-01T11:03:51.808Z</lastmod>
   </url>
 </urlset>

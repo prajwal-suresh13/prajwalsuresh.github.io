@@ -9,7 +9,7 @@
 <meta name="author" content="Prajwal Suresh">
 <meta name="dcterms.date" content="2022-11-22">
 
-<title>Prajwal Suresh - Stable diffusion using 🤗 Hugging Face - Introduction</title>
+<title>Prajwal Suresh - Stable diffusion - Introduction</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -131,13 +131,13 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 
 
 <link rel="stylesheet" href="../../styles.css">
-<meta property="og:title" content="Prajwal Suresh - Stable diffusion using 🤗 Hugging Face - Introduction">
+<meta property="og:title" content="Prajwal Suresh - Stable diffusion - Introduction">
 <meta property="og:description" content="In this post I will give an introduction on using 🤗 Diffusers library to generate images using texts as input.">
 <meta property="og:image" content="https://prajwalsuresh.com/posts\2022-11-22-StableDiffusionIntro\01.png">
 <meta property="og:site-name" content="Prajwal Suresh">
 <meta property="og:image:height" content="512">
 <meta property="og:image:width" content="512">
-<meta name="twitter:title" content="Prajwal Suresh - Stable diffusion using 🤗 Hugging Face - Introduction">
+<meta name="twitter:title" content="Prajwal Suresh - Stable diffusion - Introduction">
 <meta name="twitter:description" content="In this post I will give an introduction on using 🤗 Diffusers library to generate images using texts as input.">
 <meta name="twitter:image" content="https://prajwalsuresh.com/posts\2022-11-22-StableDiffusionIntro\01.png">
 <meta name="twitter:creator" content="@prajwal">
@@ -233,7 +233,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
   </ul></li>
   <li><a href="#implementing-stablediffusionpipeline" id="toc-implementing-stablediffusionpipeline" class="nav-link" data-scroll-target="#implementing-stablediffusionpipeline"><span class="toc-section-number">5</span>  Implementing StableDiffusionPipeline</a>
   <ul class="collapse">
-  <li><a href="#intialize-models" id="toc-intialize-models" class="nav-link" data-scroll-target="#intialize-models"><span class="toc-section-number">5.1</span>  Intialize models</a></li>
+  <li><a href="#initialize-models" id="toc-initialize-models" class="nav-link" data-scroll-target="#initialize-models"><span class="toc-section-number">5.1</span>  Initialize models</a></li>
   <li><a href="#tokenize-texts" id="toc-tokenize-texts" class="nav-link" data-scroll-target="#tokenize-texts"><span class="toc-section-number">5.2</span>  Tokenize Texts</a></li>
   <li><a href="#diffusion-loop" id="toc-diffusion-loop" class="nav-link" data-scroll-target="#diffusion-loop"><span class="toc-section-number">5.3</span>  Diffusion Loop</a></li>
   <li><a href="#adding-callback" id="toc-adding-callback" class="nav-link" data-scroll-target="#adding-callback"><span class="toc-section-number">5.4</span>  Adding Callback</a></li>
@@ -249,7 +249,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Stable diffusion using 🤗 Hugging Face - Introduction</h1>
+<h1 class="title">Stable diffusion - Introduction</h1>
   <div class="quarto-categories">
     <div class="quarto-category">Stable Diffusion</div>
   </div>
@@ -282,11 +282,12 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <blockquote class="blockquote">
 <p>Introduction to using 🤗 <a href="https://huggingface.co/">Hugging face</a> - <a href="https://github.com/huggingface/diffusers">Diffusers library</a> for Stable Diffusion, looking into the core components and implementing StableDiffusionPipeline using it</p>
 </blockquote>
+<br>
 <div data-align="center">
-<p><a href="https://colab.research.google.com/github/prajwal-suresh13/image_colorization/blob/master/image_colorization_cyclegan_training.ipynb"> <img src="https://colab.research.google.com/assets/colab-badge.svg" width="150"> </a></p>
+<p><a href="https://colab.research.google.com/github/prajwal-suresh13/diffusion/blob/master/01_stable_diffusion_introduction.ipynb"> <img src="https://colab.research.google.com/assets/colab-badge.svg" width="150"> </a></p>
 </div>
 <p><br></p>
-<p>In this post I will give an introduction on using 🤗 Diffusers library to generate images using texts as input. This blog is based on the knowledge acquired while doing the <a href="https://www.fast.ai/posts/part2-2022.html"><em>‘From Deep learning foundations to Stable Diffusion’</em></a> course by <a href="https://www.fast.ai/posts/part2-2022.html">FastAI</a> . The first few lessons of the FastAI course are publicly available <a href="https://www.fast.ai/posts/part2-2022-preview.html">here</a>. Until the rest of the lessons are available, you can also checkout the first part of the <a href="https://course.fast.ai/">course</a> which is one of the best Deep Learning courses</p>
+<p>In this post I will give an introduction on using 🤗 Diffusers library to generate images using texts as input. This post is based on the knowledge acquired while doing the <a href="https://www.fast.ai/posts/part2-2022.html"><em>‘From Deep learning foundations to Stable Diffusion’</em></a> course by <a href="https://www.fast.ai/posts/part2-2022.html">FastAI</a> . The first few lessons of the FastAI course are publicly available <a href="https://www.fast.ai/posts/part2-2022-preview.html">here</a>. Until the rest of the lessons are available, you can also checkout the first part of the <a href="https://course.fast.ai/">course</a> which is one of the best Deep Learning courses</p>
 <p>At first, let’s install the diffusers library</p>
 <div class="cell" data-outputid="fb0ef25e-0a88-488c-ff87-366216258407">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="op">!</span>pip install <span class="op">-</span>Uq accelerate transformers diffusers ftfy</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -849,8 +850,8 @@ Fig 10 : Diffusion process <a href="https://medium.com/towards-data-science/stab
 Now that we have understood the core components of the StableDiffusion, let’s summarize the diffusion process<br> 1. The prompts provided by the end user is converted to embeddings by the CLIPTextModel<br> 2. If input image is provided, <br>  - It is converted to latents by the VAE’s encoder and combined with noise from the Scheduler. <br> Else,<br>  - Random noise is generated and combined with noise from the Scheduler <br> 3. The embeddings (textual and unconditional) and the latents are provided as input to the UNet along with the current timestep <br> 4. UNet predicts noise and this noise is removed from the latents. This process is repeated N times ie num_inference_steps <br> 5. The latents produced by the UNet are passed to VAE’s decoder to get high resolution image <br>
 </p>
 <p>Finally, let’s try to implement <code>StableDiffusionPipeline</code> using these core components. Let’s call our pipeline as <code>SDPipeline</code></p>
-<section id="intialize-models" class="level2" data-number="5.1">
-<h2 data-number="5.1" class="anchored" data-anchor-id="intialize-models"><span class="header-section-number">5.1</span> Intialize models</h2>
+<section id="initialize-models" class="level2" data-number="5.1">
+<h2 data-number="5.1" class="anchored" data-anchor-id="initialize-models"><span class="header-section-number">5.1</span> Initialize models</h2>
 <p>First lets import the model required from diffusers and transformers library. We then create a class <code>SDPipeline</code> and the <code>__init__</code> method takes model_path as input which in our case is <code>CompVis/stable-diffusion-v1-4</code></p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb38"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> transformers <span class="im">import</span> CLIPTextModel, CLIPTokenizer</span>
@@ -1021,8 +1022,8 @@ Now that we have understood the core components of the StableDiffusion, let’s 
 </section>
 <section id="conclusion" class="level1" data-number="6">
 <h1 data-number="6"><span class="header-section-number">6</span> Conclusion</h1>
-<p>In this post, we have covered a brief introduction of Stable diffusion. After that, in later sections we understood each components of the Stable Diffusion model along with code. At the end, we implemented <code>SDPipeline</code> using the core components, generated images for multiple prompts and also visualized the images generated at particular timesteps.</p>
-<p>I hope you enjoyed reading it. If there is any feedback, feel free to reach out on <a href="https://www.linkedin.com/in/prajwal-s-1416061b3/">Linkedin</a> or on <a href="prajwalsuresh13@gmail.com">mail</a></p>
+<p>In this post, we have covered a brief introduction of Stable diffusion. After that, in later sections we understood each components of the Stable Diffusion model along with code. At the end, we implemented <code>SDPipeline</code> using the core components, generated images for multiple prompts and also visualized the images generated at particular timesteps.. In the <a href="https://prajwal-suresh13.github.io/website/posts/2022-11-22-StableDiffusionVariations/02_stable_diffusion_variations.html">next post</a> we will be looking into additional functionality such as Negative prompt, Image to Image and Textual Inversion</p>
+<p>I hope you enjoyed reading it. If there is any feedback, feel free to reach out on <a href="https://www.linkedin.com/in/prajwal-s-1416061b3/">LinkedIn</a> or on <a href="mailto:prajwalsuresh13@gmail.com">mail</a></p>
 </section>
 <section id="references" class="level1" data-number="7">
 <h1 data-number="7"><span class="header-section-number">7</span> References</h1>

@@ -2,14 +2,16 @@
   {
     "listing": "/blog.html",
     "items": [
-      "/posts/2022-11-22-StableDiffusionVariations/02_stable_diffusion_variations.html",
+      "/posts/2022-12-01-Dreambooth/03_pintu_dreambooth.html",
+      "/posts/2022-11-24-StableDiffusionVariations/02_stable_diffusion_variations.html",
       "/posts/2022-11-22-StableDiffusionIntro/01_stable_diffusion_introduction.html"
     ]
   },
   {
     "listing": "/index.html",
     "items": [
-      "/posts/2022-11-22-StableDiffusionVariations/02_stable_diffusion_variations.html",
+      "/posts/2022-12-01-Dreambooth/03_pintu_dreambooth.html",
+      "/posts/2022-11-24-StableDiffusionVariations/02_stable_diffusion_variations.html",
       "/posts/2022-11-22-StableDiffusionIntro/01_stable_diffusion_introduction.html"
     ]
   }

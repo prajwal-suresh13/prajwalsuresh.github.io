@@ -1,5 +1,5 @@
 ---
-title: Welcome to prajwalsuresh.com
+title: Welcome to prajwal-suresh13.github.io
 comments: False
 format:
   html:

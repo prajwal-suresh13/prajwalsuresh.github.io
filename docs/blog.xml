@@ -10,11 +10,830 @@
 <atom:link href="https://prajwalsuresh.com/blog.xml" rel="self" type="application/rss+xml"/>
 <description>Prajwal&#39;s personal website</description>
 <generator>quarto-1.2.269</generator>
-<lastBuildDate>Wed, 23 Nov 2022 18:30:00 GMT</lastBuildDate>
+<lastBuildDate>Wed, 30 Nov 2022 18:30:00 GMT</lastBuildDate>
 <item>
-  <title>Stable diffusion using 🤗 Hugging Face - Variations</title>
+  <title>Stable diffusion - Dreambooth</title>
   <dc:creator>Prajwal Suresh</dc:creator>
-  <link>https://prajwalsuresh.com/posts/2022-11-22-StableDiffusionVariations/02_stable_diffusion_variations.html</link>
+  <link>https://prajwalsuresh.com/posts/2022-12-01-Dreambooth/03_pintu_dreambooth.html</link>
+  <description><![CDATA[ 
+
+
+
+<blockquote class="blockquote">
+<p>Training a new concept to Stable Diffusion model using Dreambooth, generating images of the new concept using the trained model, and saving the pipeline to HuggingFace Hub</p>
+</blockquote>
+<br>
+<div data-align="center">
+<p><a href="https://colab.research.google.com/github/prajwal-suresh13/diffusion/blob/master/03_pintu_dreambooth.ipynb"> <img src="https://prajwalsuresh.com/posts/2022-12-01-Dreambooth/https:/colab.research.google.com/assets/colab-badge.svg" width="150"> </a></p>
+</div>
+<p><br></p>
+<p>This is the third post on Stable Diffusion. Check out the previous posts through links below if you haven’t read them yet <br><br> 1. <strong>Part 1</strong> - <a href="https://prajwal-suresh13.github.io/website/posts/2022-11-22-StableDiffusionIntro/01_stable_diffusion_introduction.html">Stable diffusion - Introduction</a>.<br> 2. <strong>Part 2</strong> - <a href="https://prajwal-suresh13.github.io/website/posts/2022-11-22-StableDiffusionVariations/02_stable_diffusion_variations.html">Stable diffusion - Negative Prompt, Image to Image &amp; Textual Inversion</a></p>
+<p>In previous posts, we learnt about Stable Diffusion and its key components VAE, UNet, Scheduler &amp; CLIPTextModel. We also learnt the variations provided by the model such as Negative Prompt and Image to Image pipeline. We implemented all these and named our pipeline as <code>SDPipeline</code> . We also learnt how we can use Textual Inversion to train a new concept to the Stable Diffusion model.</p>
+<p>In this post, we will be covering Dreambooth which is similar to Textual Inversion, train a new concept using it and push our model to HuggingFace Hub, from where anyone can use our fine-tuned model. This post is based on the HuggingFace Notebook found <a href="https://github.com/huggingface/notebooks/blob/main/diffusers/sd_dreambooth_training.ipynb">here</a>. So let’s get started</p>
+<section id="what-is-dreambooth" class="level1" data-number="1">
+<h1 data-number="1"><span class="header-section-number">1</span> What is Dreambooth?</h1>
+<p>Stable Diffusion results are amazing. But what if you want to generate images of subjects that are personal to you. Can it render images of your cute pet dog having fun at the beach? What about you being the main character of superhero movie saving the World?. Yes, you absolutely can personalize the Stable Diffusion model using Dreambooth</p>
+<figure align="center" class="figure">
+<figure class="figure">
+<img src="https://prajwalsuresh.com/posts/2022-12-01-Dreambooth/https:/tryolabs.com/assets/blog/2022-10-25-the-guide-to-fine-tuning-stable-diffusion-with-your-own-images/stable-diffusion21-d3f64be213.jpg" width="380" height="280" style="float:right" class="figure-img">
+<figcaption class="figure-caption">
+<a href="https://tryolabs.com/blog/2022/10/25/the-guide-to-fine-tuning-stable-diffusion-with-your-own-images">Credits</a>
+</figcaption>
+</figure>
+<figure class="figure">
+<img src="https://prajwalsuresh.com/posts/2022-12-01-Dreambooth/02.png" width="280" height="280" style="float:left" class="figure-img">
+</figure>
+</figure>
+<p>Dreambooth is an approach to teach a new concept by fine-tuning a pretrained text-to-image model such that it binds a unique token with the new concept of images. If you are aware of fine-tuning vision models, you might be thinking at this point that it will take hundreds of images and hours of training to fine-tune Stable Diffusion model, but to our surprise only a minimum of 5 images of the new subject is required!</p>
+<p>The image on the right above is generated from the model which I fine-tuned for around 30 minutes on Tesla T4 GPU and 16GB RAM with just 6 images of my pet dog. Amazing isn’t it!</p>
+
+<style>
+      .parent {
+        position: relative;
+        top: 0;
+        left: 0;
+      }
+      .image1 {
+        position: relative;
+        top: 0;
+        left: 0;
+        border: 1px solid #000000;
+      }
+      .image2 {
+        position: absolute;
+        top: 30px;
+        left: 30px;
+        border: 1px solid #000000;
+      }
+    </style>
+
+<figure align="center" class="parent figure">
+<img class="image1 figure-img" src="https://prajwalsuresh.com/posts/2022-12-01-Dreambooth/https:/encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQrC5Tpk9HcrkzqNa9TnHv5fkwvD8XOqjjAmv0mFMbo&amp;s" width="800" height="450"> <img class="image2 figure-img" src="https://prajwalsuresh.com/posts/2022-12-01-Dreambooth/https:/dreambooth.github.io/DreamBooth_files/system.png" width="700">
+<figcaption align="center" class="figure-caption">
+<h4 class="anchored" data-anchor-id="what-is-dreambooth">
+Fig 1: Dreambooth approach <a href="https://dreambooth.github.io/">(Image Credit)</a>
+</h4>
+</figcaption>
+</figure>
+<p>Dreambooth approach of fine-tuning the text-to image diffusion model is as follows:<br> 1. We pair the input images of our interested subject and text prompt containing a unique identifier and fine tune the model. (Example - for unique identifier you can use a token which is less frequently used such as sks.So the prompt will be “A photo of sks dog”)<br> 2. We also pass the class of the subject as a prompt while fine-tuning the model and apply class-specific prior preservation loss (Example - “A photo of a dog”) <br></p>
+<p>Prior Preservation doesn’t seem to make huge difference except when trained on faces. So prior preservation is not used while training in this post. Checkout this amazing detailed <a href="https://wandb.ai/psuraj/dreambooth/reports/Training-Stable-Diffusion-with-Dreambooth--VmlldzoyNzk0NDc3">article</a> in which they have experimented training dreambooth with different settings. You can follow the HuggingFace <a href="https://github.com/huggingface/notebooks/blob/main/diffusers/sd_dreambooth_training.ipynb">notebook</a> in which they have implemented prior preservation</p>
+<p>Let’s install the required libraries and load the <code>CompVis/stable-diffusion-v1-4</code> models in the next section</p>
+</section>
+<section id="getting-started" class="level1" data-number="2">
+<h1 data-number="2"><span class="header-section-number">2</span> Getting started</h1>
+<p>At first, we will be connecting to Google Drive from Google Colab. This allows us to read images saved in Drive for training model and also save the trained model to the Drive</p>
+<div class="cell" data-outputid="cde1a5ae-0973-4294-a35c-40486c737564">
+<div class="sourceCode cell-code" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><span class="im" style="color: #00769E;">from</span> google.colab <span class="im" style="color: #00769E;">import</span> drive</span>
+<span id="cb1-2">drive.mount(<span class="st" style="color: #20794D;">'/content/gdrive'</span>)</span></code></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Mounted at /content/gdrive</code></pre>
+</div>
+</div>
+<p>We will be downloading the required libraries as we did in previous posts. We will be installing and importing an additional library named <code>bitsandbytes</code>. It provides an 8-bit optimizer which saves memory and increases speed while training. For more details checkout this <a href="https://github.com/TimDettmers/bitsandbytes">repo</a></p>
+<p>We will also be using <code>accelerate</code> library which helps in distributed training, gradient accumulation and many more.</p>
+<div class="cell" data-outputid="ad894817-a679-4aa6-bf43-8a5b10d0bc22" data-execution_count="1">
+<div class="sourceCode cell-code" id="cb3" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><span class="op" style="color: #5E5E5E;">!</span>pip install <span class="op" style="color: #5E5E5E;">-</span>Uq accelerate transformers diffusers ftfy</span></code></pre></div>
+</div>
+<div class="cell" data-outputid="2b205681-f717-44a4-b00d-944140291b73" data-execution_count="2">
+<div class="sourceCode cell-code" id="cb4" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><span class="op" style="color: #5E5E5E;">!</span>pip install <span class="op" style="color: #5E5E5E;">-</span>qq bitsandbytes</span></code></pre></div>
+</div>
+<p>We can authenticate our notebook to Huggingface services using the commands below. Since we will be pushing our model to HuggingFace Hub later, we will need write permissions. So you need to create an Access Token with write permission and use it to authenticate</p>
+<div class="cell" data-outputid="fad27089-f24f-4e3a-b8d3-6d2a475ccab0" data-execution_count="3">
+<div class="sourceCode cell-code" id="cb5" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><span class="im" style="color: #00769E;">from</span> huggingface_hub <span class="im" style="color: #00769E;">import</span> notebook_login</span>
+<span id="cb5-2">notebook_login()</span></code></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Token is valid.
+Your token has been saved in your configured git credential helpers (store).
+Your token has been saved to /root/.huggingface/token
+Login successful</code></pre>
+</div>
+</div>
+<div class="cell" data-execution_count="4">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb7" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><span class="im" style="color: #00769E;">from</span> PIL <span class="im" style="color: #00769E;">import</span> Image</span>
+<span id="cb7-2"><span class="im" style="color: #00769E;">import</span> numpy <span class="im" style="color: #00769E;">as</span> np</span>
+<span id="cb7-3"><span class="im" style="color: #00769E;">from</span> tqdm.auto <span class="im" style="color: #00769E;">import</span> tqdm</span>
+<span id="cb7-4"><span class="im" style="color: #00769E;">from</span> pathlib <span class="im" style="color: #00769E;">import</span> Path</span>
+<span id="cb7-5"><span class="im" style="color: #00769E;">import</span> math</span>
+<span id="cb7-6"></span>
+<span id="cb7-7"><span class="im" style="color: #00769E;">import</span> torch</span>
+<span id="cb7-8"><span class="im" style="color: #00769E;">import</span> torch.nn.functional <span class="im" style="color: #00769E;">as</span> F</span>
+<span id="cb7-9"><span class="im" style="color: #00769E;">from</span> torch.utils.data <span class="im" style="color: #00769E;">import</span> Dataset</span>
+<span id="cb7-10"><span class="im" style="color: #00769E;">from</span> torchvision <span class="im" style="color: #00769E;">import</span> transforms <span class="im" style="color: #00769E;">as</span> tfms</span>
+<span id="cb7-11"></span>
+<span id="cb7-12"><span class="im" style="color: #00769E;">from</span> diffusers <span class="im" style="color: #00769E;">import</span> AutoencoderKL, DDPMScheduler, PNDMScheduler, StableDiffusionPipeline, UNet2DConditionModel</span>
+<span id="cb7-13"><span class="im" style="color: #00769E;">from</span> diffusers.optimization <span class="im" style="color: #00769E;">import</span> get_scheduler</span>
+<span id="cb7-14"><span class="im" style="color: #00769E;">from</span> diffusers.pipelines.stable_diffusion <span class="im" style="color: #00769E;">import</span> StableDiffusionSafetyChecker</span>
+<span id="cb7-15"></span>
+<span id="cb7-16"><span class="im" style="color: #00769E;">from</span> accelerate <span class="im" style="color: #00769E;">import</span> Accelerator</span>
+<span id="cb7-17"><span class="im" style="color: #00769E;">from</span> accelerate.logging <span class="im" style="color: #00769E;">import</span> get_logger</span>
+<span id="cb7-18"><span class="im" style="color: #00769E;">from</span> accelerate.utils <span class="im" style="color: #00769E;">import</span> set_seed</span>
+<span id="cb7-19"></span>
+<span id="cb7-20"><span class="im" style="color: #00769E;">from</span> transformers <span class="im" style="color: #00769E;">import</span> CLIPFeatureExtractor, CLIPTextModel, CLIPTokenizer</span>
+<span id="cb7-21"></span>
+<span id="cb7-22"><span class="im" style="color: #00769E;">import</span> bitsandbytes <span class="im" style="color: #00769E;">as</span> bnb</span></code></pre></div>
+</details>
+</div>
+<div class="cell" data-execution_count="5">
+<div class="sourceCode cell-code" id="cb8" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><span class="kw" style="color: #003B4F;">def</span> image_grid(imgs, rows, cols):</span>
+<span id="cb8-2">    w,h <span class="op" style="color: #5E5E5E;">=</span> imgs[<span class="dv" style="color: #AD0000;">0</span>].size</span>
+<span id="cb8-3">    grid <span class="op" style="color: #5E5E5E;">=</span> Image.new(<span class="st" style="color: #20794D;">"RGB"</span>, size<span class="op" style="color: #5E5E5E;">=</span>(cols<span class="op" style="color: #5E5E5E;">*</span>w, rows<span class="op" style="color: #5E5E5E;">*</span>h))</span>
+<span id="cb8-4">    <span class="cf" style="color: #003B4F;">for</span> i, img <span class="kw" style="color: #003B4F;">in</span> <span class="bu" style="color: null;">enumerate</span>(imgs):grid.paste(img, box<span class="op" style="color: #5E5E5E;">=</span>(i<span class="op" style="color: #5E5E5E;">%</span>cols<span class="op" style="color: #5E5E5E;">*</span>w, i<span class="op" style="color: #5E5E5E;">//</span>cols<span class="op" style="color: #5E5E5E;">*</span>h))</span>
+<span id="cb8-5">    <span class="cf" style="color: #003B4F;">return</span> grid</span></code></pre></div>
+</div>
+<p>Next, we will initialize the core components of the Stable Diffusion model with the weights of <code>CompVis/stable-diffusion-v1-4</code> repo</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb9" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1">model_path<span class="op" style="color: #5E5E5E;">=</span><span class="st" style="color: #20794D;">"CompVis/stable-diffusion-v1-4"</span></span></code></pre></div>
+</div>
+<div class="cell" data-outputid="5d64a83b-ac0f-49f5-df86-f7bed7a7b4da">
+<div class="sourceCode cell-code" id="cb10" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1">text_encoder <span class="op" style="color: #5E5E5E;">=</span> CLIPTextModel.from_pretrained(model_path, subfolder<span class="op" style="color: #5E5E5E;">=</span><span class="st" style="color: #20794D;">"text_encoder"</span>)</span>
+<span id="cb10-2">vae          <span class="op" style="color: #5E5E5E;">=</span> AutoencoderKL.from_pretrained(model_path, subfolder<span class="op" style="color: #5E5E5E;">=</span><span class="st" style="color: #20794D;">"vae"</span>)</span>
+<span id="cb10-3">unet         <span class="op" style="color: #5E5E5E;">=</span> UNet2DConditionModel.from_pretrained(model_path, subfolder<span class="op" style="color: #5E5E5E;">=</span><span class="st" style="color: #20794D;">"unet"</span>)</span>
+<span id="cb10-4">tokenizer    <span class="op" style="color: #5E5E5E;">=</span> CLIPTokenizer.from_pretrained(model_path, subfolder<span class="op" style="color: #5E5E5E;">=</span><span class="st" style="color: #20794D;">"tokenizer"</span>)</span></code></pre></div>
+<div class="cell-output cell-output-display">
+<script type="application/vnd.jupyter.widget-view+json">
+{"model_id":"d8e7356bd6b542fcb3875899149aeccf","version_major":2,"version_minor":0}
+</script>
+</div>
+<div class="cell-output cell-output-display">
+<script type="application/vnd.jupyter.widget-view+json">
+{"model_id":"1f3efdfd1a28474488a6a347a0bdee3f","version_major":2,"version_minor":0}
+</script>
+</div>
+<div class="cell-output cell-output-display">
+<script type="application/vnd.jupyter.widget-view+json">
+{"model_id":"fe49a5dc59b04a31bc7833cf2c4e9cf8","version_major":2,"version_minor":0}
+</script>
+</div>
+<div class="cell-output cell-output-display">
+<script type="application/vnd.jupyter.widget-view+json">
+{"model_id":"7ea9f1f31c984600bf904089524cc9f3","version_major":2,"version_minor":0}
+</script>
+</div>
+<div class="cell-output cell-output-display">
+<script type="application/vnd.jupyter.widget-view+json">
+{"model_id":"6cd43082ad2f41faa32808c3e312df7e","version_major":2,"version_minor":0}
+</script>
+</div>
+<div class="cell-output cell-output-display">
+<script type="application/vnd.jupyter.widget-view+json">
+{"model_id":"ba64494b671449a391b8790929b39e54","version_major":2,"version_minor":0}
+</script>
+</div>
+<div class="cell-output cell-output-display">
+<script type="application/vnd.jupyter.widget-view+json">
+{"model_id":"9fe6aa180f9b4823bd72a3555880617a","version_major":2,"version_minor":0}
+</script>
+</div>
+<div class="cell-output cell-output-display">
+<script type="application/vnd.jupyter.widget-view+json">
+{"model_id":"71e0ce7708084f20a74e77b19c20f063","version_major":2,"version_minor":0}
+</script>
+</div>
+<div class="cell-output cell-output-display">
+<script type="application/vnd.jupyter.widget-view+json">
+{"model_id":"9f3f7d6687e64b628d62dc6453a83016","version_major":2,"version_minor":0}
+</script>
+</div>
+<div class="cell-output cell-output-display">
+<script type="application/vnd.jupyter.widget-view+json">
+{"model_id":"6e6e5c916c814d87a6ca4955895ee45c","version_major":2,"version_minor":0}
+</script>
+</div>
+</div>
+</section>
+<section id="data" class="level1" data-number="3">
+<h1 data-number="3"><span class="header-section-number">3</span> Data</h1>
+<p>We need to provide the images of our subject and the prompt with the unique token to fine-tune model. So let’s create a dataset which takes images and prompts as input. The dataset needs to convert the images into tensor which is done using PyTorch’s transforms. It also should return input_ids for the prompt which is provided by the Tokenizer. Both pixel values and prompt ids are returned as dictionary</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb11" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><span class="kw" style="color: #003B4F;">class</span> DreamBoothDataset(Dataset):</span>
+<span id="cb11-2">    <span class="kw" style="color: #003B4F;">def</span> <span class="fu" style="color: #4758AB;">__init__</span>(<span class="va" style="color: #111111;">self</span>, images_path, prompts , tokenizer, size <span class="op" style="color: #5E5E5E;">=</span><span class="dv" style="color: #AD0000;">512</span>, center_crop<span class="op" style="color: #5E5E5E;">=</span><span class="va" style="color: #111111;">False</span>):</span>
+<span id="cb11-3">        <span class="va" style="color: #111111;">self</span>.size, <span class="va" style="color: #111111;">self</span>.center_crop <span class="op" style="color: #5E5E5E;">=</span> size, center_crop</span>
+<span id="cb11-4">        <span class="va" style="color: #111111;">self</span>.tokenizer <span class="op" style="color: #5E5E5E;">=</span> tokenizer</span>
+<span id="cb11-5">        <span class="va" style="color: #111111;">self</span>.images_path <span class="op" style="color: #5E5E5E;">=</span> Path(images_path)</span>
+<span id="cb11-6">        <span class="cf" style="color: #003B4F;">if</span> <span class="kw" style="color: #003B4F;">not</span> <span class="va" style="color: #111111;">self</span>.images_path.exists():</span>
+<span id="cb11-7">            <span class="cf" style="color: #003B4F;">raise</span> <span class="pp" style="color: #AD0000;">ValueError</span>(<span class="st" style="color: #20794D;">"Images path doesn't exist"</span>)</span>
+<span id="cb11-8"></span>
+<span id="cb11-9">        <span class="va" style="color: #111111;">self</span>.images <span class="op" style="color: #5E5E5E;">=</span> <span class="bu" style="color: null;">list</span>(Path(images_path).iterdir())</span>
+<span id="cb11-10">        <span class="va" style="color: #111111;">self</span>.num_of_images <span class="op" style="color: #5E5E5E;">=</span> <span class="bu" style="color: null;">len</span>(<span class="va" style="color: #111111;">self</span>.images)</span>
+<span id="cb11-11">        <span class="va" style="color: #111111;">self</span>.prompts <span class="op" style="color: #5E5E5E;">=</span> prompts </span>
+<span id="cb11-12"></span>
+<span id="cb11-13">        <span class="va" style="color: #111111;">self</span>.image_transforms <span class="op" style="color: #5E5E5E;">=</span> tfms.Compose([</span>
+<span id="cb11-14">            tfms.Resize(size, interpolation <span class="op" style="color: #5E5E5E;">=</span> tfms.InterpolationMode.BILINEAR),</span>
+<span id="cb11-15">            tfms.CenterCrop(size) <span class="cf" style="color: #003B4F;">if</span> center_crop <span class="cf" style="color: #003B4F;">else</span> tfms.RandomCrop(size),</span>
+<span id="cb11-16">            tfms.ToTensor(),</span>
+<span id="cb11-17">            tfms.Normalize([<span class="fl" style="color: #AD0000;">0.5</span>],[<span class="fl" style="color: #AD0000;">0.5</span>])</span>
+<span id="cb11-18">        ])  </span>
+<span id="cb11-19">        </span>
+<span id="cb11-20">            </span>
+<span id="cb11-21">    <span class="kw" style="color: #003B4F;">def</span> <span class="fu" style="color: #4758AB;">__len__</span>(<span class="va" style="color: #111111;">self</span>):</span>
+<span id="cb11-22">        <span class="cf" style="color: #003B4F;">return</span> <span class="va" style="color: #111111;">self</span>.num_of_images    </span>
+<span id="cb11-23"></span>
+<span id="cb11-24">    <span class="kw" style="color: #003B4F;">def</span> <span class="fu" style="color: #4758AB;">__getitem__</span>(<span class="va" style="color: #111111;">self</span>, index):</span>
+<span id="cb11-25">        example <span class="op" style="color: #5E5E5E;">=</span> {}</span>
+<span id="cb11-26">        image <span class="op" style="color: #5E5E5E;">=</span> Image.<span class="bu" style="color: null;">open</span>(<span class="va" style="color: #111111;">self</span>.images[index<span class="op" style="color: #5E5E5E;">%</span><span class="va" style="color: #111111;">self</span>.num_of_images]).convert(<span class="st" style="color: #20794D;">"RGB"</span>)   </span>
+<span id="cb11-27">        example[<span class="st" style="color: #20794D;">"images"</span>] <span class="op" style="color: #5E5E5E;">=</span> <span class="va" style="color: #111111;">self</span>.image_transforms(image)  </span>
+<span id="cb11-28">        example[<span class="st" style="color: #20794D;">"prompt_ids"</span>] <span class="op" style="color: #5E5E5E;">=</span> <span class="va" style="color: #111111;">self</span>.tokenizer(<span class="va" style="color: #111111;">self</span>.prompts, padding<span class="op" style="color: #5E5E5E;">=</span><span class="st" style="color: #20794D;">"do_not_pad"</span>, truncation<span class="op" style="color: #5E5E5E;">=</span><span class="va" style="color: #111111;">True</span>, </span>
+<span id="cb11-29">                                               max_length<span class="op" style="color: #5E5E5E;">=</span><span class="va" style="color: #111111;">self</span>.tokenizer.model_max_length).input_ids </span>
+<span id="cb11-30">        </span>
+<span id="cb11-31">        <span class="cf" style="color: #003B4F;">return</span> example          </span></code></pre></div>
+</div>
+<p>Dataloader helps us to sample minibatches from our dataset. Since our dataset returns dictionary, we have to tell the Dataloader how it can combine and return minibatches of pixelvalues and prompt_ids.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb12" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><span class="kw" style="color: #003B4F;">def</span> collate_fn(examples):</span>
+<span id="cb12-2">    pixels    <span class="op" style="color: #5E5E5E;">=</span> [example[<span class="st" style="color: #20794D;">"images"</span>] <span class="cf" style="color: #003B4F;">for</span> example <span class="kw" style="color: #003B4F;">in</span> examples]</span>
+<span id="cb12-3">    input_ids <span class="op" style="color: #5E5E5E;">=</span> [example[<span class="st" style="color: #20794D;">"prompt_ids"</span>] <span class="cf" style="color: #003B4F;">for</span> example <span class="kw" style="color: #003B4F;">in</span> examples]</span>
+<span id="cb12-4">    </span>
+<span id="cb12-5">    pixels <span class="op" style="color: #5E5E5E;">=</span> torch.stack(pixels).to(memory_format<span class="op" style="color: #5E5E5E;">=</span>torch.contiguous_format).<span class="bu" style="color: null;">float</span>()</span>
+<span id="cb12-6">    input_ids <span class="op" style="color: #5E5E5E;">=</span> tokenizer.pad({<span class="st" style="color: #20794D;">"input_ids"</span>:input_ids}, padding<span class="op" style="color: #5E5E5E;">=</span><span class="va" style="color: #111111;">True</span>, return_tensors<span class="op" style="color: #5E5E5E;">=</span><span class="st" style="color: #20794D;">"pt"</span>).input_ids</span>
+<span id="cb12-7"></span>
+<span id="cb12-8">    batch <span class="op" style="color: #5E5E5E;">=</span> {</span>
+<span id="cb12-9">        <span class="st" style="color: #20794D;">"input_ids"</span>:input_ids,</span>
+<span id="cb12-10">        <span class="st" style="color: #20794D;">"pixel_values"</span>:pixels</span>
+<span id="cb12-11">    }</span>
+<span id="cb12-12"></span>
+<span id="cb12-13">    <span class="cf" style="color: #003B4F;">return</span> batch</span></code></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb13" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1">train_dataset <span class="op" style="color: #5E5E5E;">=</span> DreamBoothDataset(</span>
+<span id="cb13-2">        images_path <span class="op" style="color: #5E5E5E;">=</span> <span class="st" style="color: #20794D;">"/content/gdrive/My Drive/pintu"</span>,</span>
+<span id="cb13-3">        prompts <span class="op" style="color: #5E5E5E;">=</span> <span class="st" style="color: #20794D;">"a photo of a sks dog"</span>,</span>
+<span id="cb13-4">        tokenizer <span class="op" style="color: #5E5E5E;">=</span> tokenizer,</span>
+<span id="cb13-5">        size<span class="op" style="color: #5E5E5E;">=</span><span class="dv" style="color: #AD0000;">512</span>,</span>
+<span id="cb13-6">        center_crop<span class="op" style="color: #5E5E5E;">=</span><span class="va" style="color: #111111;">True</span></span>
+<span id="cb13-7">    )</span>
+<span id="cb13-8"></span>
+<span id="cb13-9">train_dataloader <span class="op" style="color: #5E5E5E;">=</span> torch.utils.data.DataLoader(train_dataset, batch_size<span class="op" style="color: #5E5E5E;">=</span> <span class="dv" style="color: #AD0000;">1</span>, shuffle<span class="op" style="color: #5E5E5E;">=</span><span class="va" style="color: #111111;">True</span>, collate_fn<span class="op" style="color: #5E5E5E;">=</span>collate_fn)</span></code></pre></div>
+</div>
+<p>Now let’s view the our data. Below are the 6 images of my pet Pintu which are used for training</p>
+<div class="cell" data-outputid="06425a6a-6aba-46fb-e6a5-0e50938bf8c3">
+<div class="sourceCode cell-code" id="cb14" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1">images <span class="op" style="color: #5E5E5E;">=</span>[Image.<span class="bu" style="color: null;">open</span>(train_dataset.images[i]).resize((<span class="dv" style="color: #AD0000;">256</span>,<span class="dv" style="color: #AD0000;">256</span>)).convert(<span class="st" style="color: #20794D;">"RGB"</span>) <span class="cf" style="color: #003B4F;">for</span> i <span class="kw" style="color: #003B4F;">in</span> <span class="bu" style="color: null;">range</span>(<span class="bu" style="color: null;">len</span>(train_dataset))]</span>
+<span id="cb14-2">image_grid(images, rows<span class="op" style="color: #5E5E5E;">=</span><span class="dv" style="color: #AD0000;">1</span>, cols<span class="op" style="color: #5E5E5E;">=</span><span class="bu" style="color: null;">len</span>(train_dataset))</span></code></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="18">
+<p><img src="https://prajwalsuresh.com/posts/2022-12-01-Dreambooth/03_pintu_dreambooth_files/figure-html/cell-13-output-1.png" class="img-fluid"></p>
+</div>
+</div>
+<figcaption align="center">
+<h4 class="anchored" data-anchor-id="data">
+Fig 2: Images used to train Dreambooth model
+</h4>
+</figcaption>
+</section>
+<section id="training" class="level1" data-number="4">
+<h1 data-number="4"><span class="header-section-number">4</span> Training</h1>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb15" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1">learning_rate<span class="op" style="color: #5E5E5E;">=</span><span class="fl" style="color: #AD0000;">5e-06</span></span>
+<span id="cb15-2">max_train_steps <span class="op" style="color: #5E5E5E;">=</span><span class="dv" style="color: #AD0000;">500</span></span>
+<span id="cb15-3">train_batch_size<span class="op" style="color: #5E5E5E;">=</span><span class="dv" style="color: #AD0000;">1</span></span>
+<span id="cb15-4">gradient_accumulation_steps<span class="op" style="color: #5E5E5E;">=</span><span class="dv" style="color: #AD0000;">2</span></span>
+<span id="cb15-5">use_8bit_adam<span class="op" style="color: #5E5E5E;">=</span><span class="va" style="color: #111111;">True</span></span>
+<span id="cb15-6">output_dir <span class="op" style="color: #5E5E5E;">=</span> <span class="st" style="color: #20794D;">"/content/gdrive/My Drive/pintu_dreambooth"</span></span></code></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb16" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1">torch_device <span class="op" style="color: #5E5E5E;">=</span> <span class="st" style="color: #20794D;">"cuda"</span> <span class="cf" style="color: #003B4F;">if</span> torch.cuda.is_available() <span class="cf" style="color: #003B4F;">else</span> <span class="st" style="color: #20794D;">"cpu"</span></span></code></pre></div>
+</div>
+<p>The function <code>dreambooth_trainer</code> fine-tunes the Stable Diffusion model. We fine-tune the model for 500 steps at a learning rate of 5e-06. The <code>pixel_values</code> of the images from the dataloader are passed to VAE’s encoder to generate latents. The <code>prompt_ids</code> are passed to the text_encoder to generate embeddings. Random noise is added at each step and the loss is calculated. The loss is then backpropogated and the weights of the model are updated. After the training is completed, all the components of the model are saved to the <code>output_dir</code> path which in our case gets saved to Google Drive</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb17" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><span class="kw" style="color: #003B4F;">def</span> dreambooth_trainer(data, text_encoder, vae, unet):</span>
+<span id="cb17-2"></span>
+<span id="cb17-3">    accelerator<span class="op" style="color: #5E5E5E;">=</span>Accelerator(gradient_accumulation_steps<span class="op" style="color: #5E5E5E;">=</span>gradient_accumulation_steps)</span>
+<span id="cb17-4">    set_seed(<span class="dv" style="color: #AD0000;">90000</span>)</span>
+<span id="cb17-5">    unet.enable_gradient_checkpointing()</span>
+<span id="cb17-6"></span>
+<span id="cb17-7">    <span class="cf" style="color: #003B4F;">if</span> use_8bit_adam:</span>
+<span id="cb17-8">        optimizer_class <span class="op" style="color: #5E5E5E;">=</span> bnb.optim.AdamW8bit</span>
+<span id="cb17-9">    <span class="cf" style="color: #003B4F;">else</span>:</span>
+<span id="cb17-10">        optimizer_class <span class="op" style="color: #5E5E5E;">=</span> torch.optim.AdamW</span>
+<span id="cb17-11"></span>
+<span id="cb17-12">    optimizer <span class="op" style="color: #5E5E5E;">=</span> optimizer_class(unet.parameters(), lr<span class="op" style="color: #5E5E5E;">=</span>learning_rate)</span>
+<span id="cb17-13"></span>
+<span id="cb17-14">    noise_scheduler <span class="op" style="color: #5E5E5E;">=</span> DDPMScheduler(beta_start<span class="op" style="color: #5E5E5E;">=</span> <span class="fl" style="color: #AD0000;">0.00085</span>, beta_end <span class="op" style="color: #5E5E5E;">=</span> <span class="fl" style="color: #AD0000;">0.012</span>, beta_schedule<span class="op" style="color: #5E5E5E;">=</span><span class="st" style="color: #20794D;">"scaled_linear"</span>,</span>
+<span id="cb17-15">                                    num_train_timesteps<span class="op" style="color: #5E5E5E;">=</span><span class="dv" style="color: #AD0000;">1000</span>)</span>
+<span id="cb17-16">    </span>
+<span id="cb17-17">    </span>
+<span id="cb17-18">    unet, optimizer, train_dataloader <span class="op" style="color: #5E5E5E;">=</span> accelerator.prepare(unet, optimizer, data)</span>
+<span id="cb17-19"></span>
+<span id="cb17-20">    text_encoder.to(torch_device)</span>
+<span id="cb17-21">    vae.to(torch_device)</span>
+<span id="cb17-22"></span>
+<span id="cb17-23"></span>
+<span id="cb17-24">    num_update_steps_per_epoch <span class="op" style="color: #5E5E5E;">=</span> math.ceil(<span class="bu" style="color: null;">len</span>(train_dataloader)<span class="op" style="color: #5E5E5E;">/</span>gradient_accumulation_steps)</span>
+<span id="cb17-25">    num_train_epochs <span class="op" style="color: #5E5E5E;">=</span> math.ceil(max_train_steps<span class="op" style="color: #5E5E5E;">/</span>num_update_steps_per_epoch)</span>
+<span id="cb17-26">    total_batch_size <span class="op" style="color: #5E5E5E;">=</span> train_batch_size <span class="op" style="color: #5E5E5E;">*</span>accelerator.num_processes <span class="op" style="color: #5E5E5E;">*</span> gradient_accumulation_steps</span>
+<span id="cb17-27"></span>
+<span id="cb17-28">    progress_bar <span class="op" style="color: #5E5E5E;">=</span> tqdm(<span class="bu" style="color: null;">range</span>(max_train_steps), disable<span class="op" style="color: #5E5E5E;">=</span><span class="kw" style="color: #003B4F;">not</span> accelerator.is_local_main_process)</span>
+<span id="cb17-29">    progress_bar.set_description(<span class="st" style="color: #20794D;">"Steps"</span>)</span>
+<span id="cb17-30">    global_step <span class="op" style="color: #5E5E5E;">=</span> <span class="dv" style="color: #AD0000;">0</span></span>
+<span id="cb17-31"></span>
+<span id="cb17-32">    <span class="cf" style="color: #003B4F;">for</span> epoch <span class="kw" style="color: #003B4F;">in</span> <span class="bu" style="color: null;">range</span>(num_train_epochs):</span>
+<span id="cb17-33">        unet.train()</span>
+<span id="cb17-34">        <span class="cf" style="color: #003B4F;">for</span> step, batch <span class="kw" style="color: #003B4F;">in</span> <span class="bu" style="color: null;">enumerate</span>(train_dataloader):</span>
+<span id="cb17-35">            <span class="cf" style="color: #003B4F;">with</span> accelerator.accumulate(unet):</span>
+<span id="cb17-36">                <span class="cf" style="color: #003B4F;">with</span> torch.no_grad():</span>
+<span id="cb17-37">                    latents <span class="op" style="color: #5E5E5E;">=</span> vae.encode(batch[<span class="st" style="color: #20794D;">"pixel_values"</span>]).latent_dist.sample()</span>
+<span id="cb17-38">                    latents<span class="op" style="color: #5E5E5E;">*=</span><span class="fl" style="color: #AD0000;">0.18215</span></span>
+<span id="cb17-39">                </span>
+<span id="cb17-40">                </span>
+<span id="cb17-41">                noise <span class="op" style="color: #5E5E5E;">=</span> torch.randn(latents.shape).to(latents.device)</span>
+<span id="cb17-42">                bsz <span class="op" style="color: #5E5E5E;">=</span> latents.shape[<span class="dv" style="color: #AD0000;">0</span>]</span>
+<span id="cb17-43">                timesteps <span class="op" style="color: #5E5E5E;">=</span> torch.randint(<span class="dv" style="color: #AD0000;">0</span>, noise_scheduler.config.num_train_timesteps,(bsz,), device<span class="op" style="color: #5E5E5E;">=</span>latents.device).<span class="bu" style="color: null;">long</span>()</span>
+<span id="cb17-44">                noisy_latents <span class="op" style="color: #5E5E5E;">=</span> noise_scheduler.add_noise(latents, noise, timesteps)</span>
+<span id="cb17-45"></span>
+<span id="cb17-46">                <span class="cf" style="color: #003B4F;">with</span> torch.no_grad():</span>
+<span id="cb17-47">                    encoder_hidden_states <span class="op" style="color: #5E5E5E;">=</span> text_encoder(batch[<span class="st" style="color: #20794D;">"input_ids"</span>])[<span class="dv" style="color: #AD0000;">0</span>]</span>
+<span id="cb17-48"></span>
+<span id="cb17-49">                noise_pred <span class="op" style="color: #5E5E5E;">=</span> unet(noisy_latents, timesteps, encoder_hidden_states).sample</span>
+<span id="cb17-50"></span>
+<span id="cb17-51">                loss <span class="op" style="color: #5E5E5E;">=</span> F.mse_loss(noise_pred, noise, reduction<span class="op" style="color: #5E5E5E;">=</span><span class="st" style="color: #20794D;">"none"</span>).mean([<span class="dv" style="color: #AD0000;">1</span>,<span class="dv" style="color: #AD0000;">2</span>,<span class="dv" style="color: #AD0000;">3</span>]).mean()</span>
+<span id="cb17-52"></span>
+<span id="cb17-53">                accelerator.backward(loss)</span>
+<span id="cb17-54">                optimizer.step()</span>
+<span id="cb17-55">                optimizer.zero_grad()</span>
+<span id="cb17-56">            </span>
+<span id="cb17-57">            <span class="cf" style="color: #003B4F;">if</span> accelerator.sync_gradients:</span>
+<span id="cb17-58">                progress_bar.update(<span class="dv" style="color: #AD0000;">1</span>)</span>
+<span id="cb17-59">                global_step<span class="op" style="color: #5E5E5E;">+=</span><span class="dv" style="color: #AD0000;">1</span></span>
+<span id="cb17-60"></span>
+<span id="cb17-61"></span>
+<span id="cb17-62">            logs <span class="op" style="color: #5E5E5E;">=</span> {<span class="st" style="color: #20794D;">"loss"</span>:loss.detach().item()}</span>
+<span id="cb17-63">            progress_bar.set_postfix(<span class="op" style="color: #5E5E5E;">**</span>logs)</span>
+<span id="cb17-64"></span>
+<span id="cb17-65">            <span class="cf" style="color: #003B4F;">if</span> global_step<span class="op" style="color: #5E5E5E;">&gt;=</span>max_train_steps:<span class="cf" style="color: #003B4F;">break</span></span>
+<span id="cb17-66"></span>
+<span id="cb17-67">        accelerator.wait_for_everyone()</span>
+<span id="cb17-68"></span>
+<span id="cb17-69">    <span class="cf" style="color: #003B4F;">if</span> accelerator.is_main_process:</span>
+<span id="cb17-70">        pipeline<span class="op" style="color: #5E5E5E;">=</span>StableDiffusionPipeline(</span>
+<span id="cb17-71">            text_encoder<span class="op" style="color: #5E5E5E;">=</span>text_encoder, vae<span class="op" style="color: #5E5E5E;">=</span>vae, unet<span class="op" style="color: #5E5E5E;">=</span>unet, </span>
+<span id="cb17-72">            tokenizer<span class="op" style="color: #5E5E5E;">=</span>tokenizer,</span>
+<span id="cb17-73">            scheduler <span class="op" style="color: #5E5E5E;">=</span> PNDMScheduler(</span>
+<span id="cb17-74">                beta_start<span class="op" style="color: #5E5E5E;">=</span><span class="fl" style="color: #AD0000;">0.00085</span>, beta_end<span class="op" style="color: #5E5E5E;">=</span><span class="fl" style="color: #AD0000;">0.012</span>, beta_schedule<span class="op" style="color: #5E5E5E;">=</span><span class="st" style="color: #20794D;">"scaled_linear"</span>, skip_prk_steps<span class="op" style="color: #5E5E5E;">=</span><span class="va" style="color: #111111;">True</span></span>
+<span id="cb17-75">            ),</span>
+<span id="cb17-76">            safety_checker<span class="op" style="color: #5E5E5E;">=</span>StableDiffusionSafetyChecker.from_pretrained(<span class="st" style="color: #20794D;">"CompVis/stable-diffusion-safety-checker"</span>),</span>
+<span id="cb17-77">            feature_extractor<span class="op" style="color: #5E5E5E;">=</span>CLIPFeatureExtractor.from_pretrained(<span class="st" style="color: #20794D;">"openai/clip-vit-base-patch32"</span>))</span>
+<span id="cb17-78">        pipeline.save_pretrained(output_dir)</span></code></pre></div>
+</div>
+<div class="cell" data-outputid="88d1ec1b-150a-45ec-dcf8-82d7765461ea">
+<div class="sourceCode cell-code" id="cb18" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><span class="im" style="color: #00769E;">import</span> accelerate</span>
+<span id="cb18-2">accelerate.notebook_launcher(dreambooth_trainer, args<span class="op" style="color: #5E5E5E;">=</span>(train_dataloader,text_encoder, vae, unet), num_processes <span class="op" style="color: #5E5E5E;">=</span> <span class="dv" style="color: #AD0000;">1</span>)</span></code></pre></div>
+</div>
+</section>
+<section id="results" class="level1" data-number="5">
+<h1 data-number="5"><span class="header-section-number">5</span> Results</h1>
+<p>Now we can load the model from the saved directory and use it for inference. To get high quality images, you can use prompts from <a href="https://lexica.art/">Lexica</a> and replace with your unique identifier.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb19" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1">output_dir <span class="op" style="color: #5E5E5E;">=</span> <span class="st" style="color: #20794D;">"/content/gdrive/My Drive/pintu_dreambooth"</span></span>
+<span id="cb19-2">torch_device <span class="op" style="color: #5E5E5E;">=</span> <span class="st" style="color: #20794D;">"cuda"</span> <span class="cf" style="color: #003B4F;">if</span> torch.cuda.is_available() <span class="cf" style="color: #003B4F;">else</span> <span class="st" style="color: #20794D;">"cpu"</span></span>
+<span id="cb19-3"></span>
+<span id="cb19-4">pipe <span class="op" style="color: #5E5E5E;">=</span> StableDiffusionPipeline.from_pretrained(</span>
+<span id="cb19-5">        output_dir,</span>
+<span id="cb19-6">        torch_dtype<span class="op" style="color: #5E5E5E;">=</span>torch.float16,</span>
+<span id="cb19-7">    ).to(torch_device)</span></code></pre></div>
+</div>
+<p>Below are some of the astonishing results generated by our fine-tuned model!</p>
+<div class="cell" data-outputid="ea2ad3b3-60ad-4501-f0bb-c6c9d946942d">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb20" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1">prompt <span class="op" style="color: #5E5E5E;">=</span> <span class="st" style="color: #20794D;">"a beautiful portrait of a cute sks dog, beautiful detailed eyes, golden hour, standing on a beach, outdoors, professional award winning portrait photography, Zeiss 150mm f/ 2.8 Hasselblad"</span> </span>
+<span id="cb20-2"></span>
+<span id="cb20-3">num_samples <span class="op" style="color: #5E5E5E;">=</span> <span class="dv" style="color: #AD0000;">3</span> </span>
+<span id="cb20-4">num_rows <span class="op" style="color: #5E5E5E;">=</span> <span class="dv" style="color: #AD0000;">3</span> </span>
+<span id="cb20-5"></span>
+<span id="cb20-6">all_images <span class="op" style="color: #5E5E5E;">=</span> [] </span>
+<span id="cb20-7"><span class="cf" style="color: #003B4F;">for</span> _ <span class="kw" style="color: #003B4F;">in</span> <span class="bu" style="color: null;">range</span>(num_rows):</span>
+<span id="cb20-8">    images <span class="op" style="color: #5E5E5E;">=</span> pipe([prompt] <span class="op" style="color: #5E5E5E;">*</span> num_samples, num_inference_steps<span class="op" style="color: #5E5E5E;">=</span><span class="dv" style="color: #AD0000;">75</span>, guidance_scale<span class="op" style="color: #5E5E5E;">=</span><span class="fl" style="color: #AD0000;">7.5</span>, seed <span class="op" style="color: #5E5E5E;">=</span> <span class="st" style="color: #20794D;">'random'</span>).images</span>
+<span id="cb20-9">    all_images.extend(images)</span>
+<span id="cb20-10"></span>
+<span id="cb20-11">grid <span class="op" style="color: #5E5E5E;">=</span> image_grid(all_images, num_samples, num_rows)</span>
+<span id="cb20-12">grid </span></code></pre></div>
+</details>
+<div class="cell-output cell-output-display">
+<script type="application/vnd.jupyter.widget-view+json">
+{"model_id":"2dd2a22a56024ee191ebcdcb19f87728","version_major":2,"version_minor":0}
+</script>
+</div>
+<div class="cell-output cell-output-display">
+<script type="application/vnd.jupyter.widget-view+json">
+{"model_id":"239f00e46fa241c29e8538274fbe47be","version_major":2,"version_minor":0}
+</script>
+</div>
+<div class="cell-output cell-output-display">
+<script type="application/vnd.jupyter.widget-view+json">
+{"model_id":"12ec83ecdfba44ed986e4113158a2f7a","version_major":2,"version_minor":0}
+</script>
+</div>
+<div class="cell-output cell-output-display" data-execution_count="17">
+<p><img src="https://prajwalsuresh.com/posts/2022-12-01-Dreambooth/03_pintu_dreambooth_files/figure-html/cell-19-output-4.png" class="img-fluid"></p>
+</div>
+</div>
+<figcaption align="center">
+<h4 class="anchored" data-anchor-id="results">
+Fig 3: A beautiful portrait of a cute sks dog, beautiful detailed eyes, golden hour, standing on a beach, outdoors, professional award winning portrait photography, Zeiss 150mm f/ 2.8 Hasselblad”
+</h4>
+</figcaption>
+<div class="cell" data-outputid="d687e52a-e2d6-4dd3-ab37-287869d9b8af">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb21" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1">prompt <span class="op" style="color: #5E5E5E;">=</span> <span class="st" style="color: #20794D;">"portrait of a sks dog wearing a hat, realism, realistic, photorealism, f 3. 5, photography, octane render, trending on artstation, artstationhd, artstationhq, unreal engine, cinema 4 d, 8 k, detailed fur "</span> </span>
+<span id="cb21-2"></span>
+<span id="cb21-3">num_samples <span class="op" style="color: #5E5E5E;">=</span> <span class="dv" style="color: #AD0000;">3</span> </span>
+<span id="cb21-4">num_rows <span class="op" style="color: #5E5E5E;">=</span> <span class="dv" style="color: #AD0000;">3</span> </span>
+<span id="cb21-5"></span>
+<span id="cb21-6"><span class="co" style="color: #5E5E5E;"># def dummy_checker(images, **kwargs): return images, False</span></span>
+<span id="cb21-7"><span class="co" style="color: #5E5E5E;"># pipe.safety_checker = dummy_checker</span></span>
+<span id="cb21-8"></span>
+<span id="cb21-9">all_images <span class="op" style="color: #5E5E5E;">=</span> [] </span>
+<span id="cb21-10"><span class="cf" style="color: #003B4F;">for</span> _ <span class="kw" style="color: #003B4F;">in</span> <span class="bu" style="color: null;">range</span>(num_rows):</span>
+<span id="cb21-11">    images <span class="op" style="color: #5E5E5E;">=</span> pipe([prompt] <span class="op" style="color: #5E5E5E;">*</span> num_samples, num_inference_steps<span class="op" style="color: #5E5E5E;">=</span><span class="dv" style="color: #AD0000;">75</span>, guidance_scale<span class="op" style="color: #5E5E5E;">=</span><span class="fl" style="color: #AD0000;">7.5</span>, seed <span class="op" style="color: #5E5E5E;">=</span> <span class="st" style="color: #20794D;">'random'</span>).images</span>
+<span id="cb21-12">    all_images.extend(images)</span>
+<span id="cb21-13"></span>
+<span id="cb21-14">grid <span class="op" style="color: #5E5E5E;">=</span> image_grid(all_images, num_samples, num_rows)</span>
+<span id="cb21-15">grid </span></code></pre></div>
+</details>
+<div class="cell-output cell-output-display">
+<script type="application/vnd.jupyter.widget-view+json">
+{"model_id":"2964ef31a2944bfead3c516c99ec2d86","version_major":2,"version_minor":0}
+</script>
+</div>
+<div class="cell-output cell-output-display">
+<script type="application/vnd.jupyter.widget-view+json">
+{"model_id":"5641344831f34b9091cde4672a0e2086","version_major":2,"version_minor":0}
+</script>
+</div>
+<div class="cell-output cell-output-display">
+<script type="application/vnd.jupyter.widget-view+json">
+{"model_id":"190f2f426d254562a869b96ff1ec04cd","version_major":2,"version_minor":0}
+</script>
+</div>
+<div class="cell-output cell-output-display" data-execution_count="21">
+<p><img src="https://prajwalsuresh.com/posts/2022-12-01-Dreambooth/03_pintu_dreambooth_files/figure-html/cell-20-output-4.png" class="img-fluid"></p>
+</div>
+</div>
+<figcaption align="center">
+<h4 class="anchored">
+Fig 4: Portrait of a sks dog wearing a hat, realism, realistic, photorealism, f 3. 5, photography, octane render, trending on artstation, artstationhd, artstationhq, unreal engine, cinema 4 d, 8 k, detailed fur ”
+</h4>
+</figcaption>
+<div class="cell" data-outputid="dbc63a4a-ab8a-437d-a1a1-3bffe911d255">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb22" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1">prompt <span class="op" style="color: #5E5E5E;">=</span> <span class="st" style="color: #20794D;">"sks dog as a realistic fantasy knight, closeup portrait art by donato giancola and greg rutkowski, digital art, trending on artstation, symmetry!! "</span> </span>
+<span id="cb22-2"></span>
+<span id="cb22-3">num_samples <span class="op" style="color: #5E5E5E;">=</span> <span class="dv" style="color: #AD0000;">3</span> </span>
+<span id="cb22-4">num_rows <span class="op" style="color: #5E5E5E;">=</span> <span class="dv" style="color: #AD0000;">3</span> </span>
+<span id="cb22-5"></span>
+<span id="cb22-6"></span>
+<span id="cb22-7">all_images <span class="op" style="color: #5E5E5E;">=</span> [] </span>
+<span id="cb22-8"><span class="cf" style="color: #003B4F;">for</span> _ <span class="kw" style="color: #003B4F;">in</span> <span class="bu" style="color: null;">range</span>(num_rows):</span>
+<span id="cb22-9">    images <span class="op" style="color: #5E5E5E;">=</span> pipe([prompt] <span class="op" style="color: #5E5E5E;">*</span> num_samples, num_inference_steps<span class="op" style="color: #5E5E5E;">=</span><span class="dv" style="color: #AD0000;">75</span>, guidance_scale<span class="op" style="color: #5E5E5E;">=</span><span class="fl" style="color: #AD0000;">7.5</span>, seed <span class="op" style="color: #5E5E5E;">=</span> <span class="st" style="color: #20794D;">'random'</span>).images</span>
+<span id="cb22-10">    all_images.extend(images)</span>
+<span id="cb22-11"></span>
+<span id="cb22-12">grid <span class="op" style="color: #5E5E5E;">=</span> image_grid(all_images, num_samples, num_rows)</span>
+<span id="cb22-13">grid </span></code></pre></div>
+</details>
+<div class="cell-output cell-output-display">
+<script type="application/vnd.jupyter.widget-view+json">
+{"model_id":"a09444f1ad3f406e8c932d523c3a9438","version_major":2,"version_minor":0}
+</script>
+</div>
+<div class="cell-output cell-output-display">
+<script type="application/vnd.jupyter.widget-view+json">
+{"model_id":"bb0abfe6bb46466da495b6ca03e3c1a1","version_major":2,"version_minor":0}
+</script>
+</div>
+<div class="cell-output cell-output-display">
+<script type="application/vnd.jupyter.widget-view+json">
+{"model_id":"c4ef9cb05fda438c89c798123de5d519","version_major":2,"version_minor":0}
+</script>
+</div>
+<div class="cell-output cell-output-display" data-execution_count="29">
+<p><img src="https://prajwalsuresh.com/posts/2022-12-01-Dreambooth/03_pintu_dreambooth_files/figure-html/cell-21-output-4.png" class="img-fluid"></p>
+</div>
+</div>
+<figcaption align="center">
+<h4 class="anchored">
+Fig 5: sks dog as a realistic fantasy knight, closeup portrait art by donato giancola and greg rutkowski, digital art, trending on artstation, symmetry!!
+</h4>
+</figcaption>
+<div class="cell" data-outputid="edb661ed-25b7-4e6f-e201-398af142ceff">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb23" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1">prompt <span class="op" style="color: #5E5E5E;">=</span> <span class="st" style="color: #20794D;">"white sks dog, with reflection in the puddle, foggy old forest, very detailed, 4 k, professional photography "</span> </span>
+<span id="cb23-2"></span>
+<span id="cb23-3">num_samples <span class="op" style="color: #5E5E5E;">=</span> <span class="dv" style="color: #AD0000;">3</span> </span>
+<span id="cb23-4">num_rows <span class="op" style="color: #5E5E5E;">=</span> <span class="dv" style="color: #AD0000;">3</span> </span>
+<span id="cb23-5"></span>
+<span id="cb23-6"></span>
+<span id="cb23-7">all_images <span class="op" style="color: #5E5E5E;">=</span> [] </span>
+<span id="cb23-8"><span class="cf" style="color: #003B4F;">for</span> _ <span class="kw" style="color: #003B4F;">in</span> <span class="bu" style="color: null;">range</span>(num_rows):</span>
+<span id="cb23-9">    images <span class="op" style="color: #5E5E5E;">=</span> pipe([prompt] <span class="op" style="color: #5E5E5E;">*</span> num_samples, num_inference_steps<span class="op" style="color: #5E5E5E;">=</span><span class="dv" style="color: #AD0000;">75</span>, guidance_scale<span class="op" style="color: #5E5E5E;">=</span><span class="fl" style="color: #AD0000;">7.5</span>, seed <span class="op" style="color: #5E5E5E;">=</span> <span class="st" style="color: #20794D;">'random'</span>).images</span>
+<span id="cb23-10">    all_images.extend(images)</span>
+<span id="cb23-11"></span>
+<span id="cb23-12">grid <span class="op" style="color: #5E5E5E;">=</span> image_grid(all_images, num_samples, num_rows)</span>
+<span id="cb23-13">grid </span></code></pre></div>
+</details>
+<div class="cell-output cell-output-display">
+<script type="application/vnd.jupyter.widget-view+json">
+{"model_id":"946d7dcfe75249ca836e8ffe909ddc99","version_major":2,"version_minor":0}
+</script>
+</div>
+<div class="cell-output cell-output-display">
+<script type="application/vnd.jupyter.widget-view+json">
+{"model_id":"acc82a56491b4e8fa54f8d3de0bc69cd","version_major":2,"version_minor":0}
+</script>
+</div>
+<div class="cell-output cell-output-display">
+<script type="application/vnd.jupyter.widget-view+json">
+{"model_id":"91a89a7183de489bbc765cf5740c248c","version_major":2,"version_minor":0}
+</script>
+</div>
+<div class="cell-output cell-output-display" data-execution_count="25">
+<p><img src="https://prajwalsuresh.com/posts/2022-12-01-Dreambooth/03_pintu_dreambooth_files/figure-html/cell-22-output-4.png" class="img-fluid"></p>
+</div>
+</div>
+<figcaption align="center">
+<h4 class="anchored">
+Fig 6 : White sks dog, with reflection in the puddle, foggy old forest, very detailed, 4 k, professional photography
+</h4>
+</figcaption>
+<div class="cell" data-outputid="b1a45dbc-8846-4e3e-c4b7-ae8f874a5a15">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb24" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb24-1">prompt <span class="op" style="color: #5E5E5E;">=</span> <span class="st" style="color: #20794D;">"framed renaissance portrait of a sks dog"</span> </span>
+<span id="cb24-2"></span>
+<span id="cb24-3">num_samples <span class="op" style="color: #5E5E5E;">=</span> <span class="dv" style="color: #AD0000;">3</span> </span>
+<span id="cb24-4">num_rows <span class="op" style="color: #5E5E5E;">=</span> <span class="dv" style="color: #AD0000;">3</span> </span>
+<span id="cb24-5"></span>
+<span id="cb24-6"></span>
+<span id="cb24-7">all_images <span class="op" style="color: #5E5E5E;">=</span> [] </span>
+<span id="cb24-8"><span class="cf" style="color: #003B4F;">for</span> _ <span class="kw" style="color: #003B4F;">in</span> <span class="bu" style="color: null;">range</span>(num_rows):</span>
+<span id="cb24-9">    images <span class="op" style="color: #5E5E5E;">=</span> pipe([prompt] <span class="op" style="color: #5E5E5E;">*</span> num_samples, num_inference_steps<span class="op" style="color: #5E5E5E;">=</span><span class="dv" style="color: #AD0000;">75</span>, guidance_scale<span class="op" style="color: #5E5E5E;">=</span><span class="fl" style="color: #AD0000;">7.5</span>, seed <span class="op" style="color: #5E5E5E;">=</span> <span class="st" style="color: #20794D;">'random'</span>).images</span>
+<span id="cb24-10">    all_images.extend(images)</span>
+<span id="cb24-11"></span>
+<span id="cb24-12">grid <span class="op" style="color: #5E5E5E;">=</span> image_grid(all_images, num_samples, num_rows)</span>
+<span id="cb24-13">grid </span></code></pre></div>
+</details>
+<div class="cell-output cell-output-display">
+<script type="application/vnd.jupyter.widget-view+json">
+{"model_id":"b58e4cf6805a4b94924f022b4ab7a21b","version_major":2,"version_minor":0}
+</script>
+</div>
+<div class="cell-output cell-output-display">
+<script type="application/vnd.jupyter.widget-view+json">
+{"model_id":"60e65f252493444299d7b0f6c18d193e","version_major":2,"version_minor":0}
+</script>
+</div>
+<div class="cell-output cell-output-display">
+<script type="application/vnd.jupyter.widget-view+json">
+{"model_id":"7eafc311a0c244709df00eedefc981c2","version_major":2,"version_minor":0}
+</script>
+</div>
+<div class="cell-output cell-output-display" data-execution_count="36">
+<p><img src="https://prajwalsuresh.com/posts/2022-12-01-Dreambooth/03_pintu_dreambooth_files/figure-html/cell-23-output-4.png" class="img-fluid"></p>
+</div>
+</div>
+<figcaption align="center">
+<h4 class="anchored">
+Fig 7: Framed renaissance portrait of a sks dog
+</h4>
+</figcaption>
+<p>In the below results, the prompt is truncated since CLIP can only handle prompts with maximum of 77 tokens</p>
+<div class="cell" data-outputid="b1dd7189-e991-4697-d16c-c6ac0a21b7f6">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb25" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb25-1">prompt <span class="op" style="color: #5E5E5E;">=</span> <span class="st" style="color: #20794D;">"a sks dog as god with a radiant halo, wings, detailed face, gorgeous, flowing hair, very muscular male body, partial anatomy, stormy and grand war scene, delicate and intricate borders for decoration, caesar victorious, proud Emperor, crepuscular ray, intricate, highly detailed, 8K, digital painting, fantasy, concept art, sharp focus, over-shoulder shot, illustration, art by greg rutkowski beeple and alphonse mucha"</span></span>
+<span id="cb25-2">num_samples <span class="op" style="color: #5E5E5E;">=</span> <span class="dv" style="color: #AD0000;">3</span> </span>
+<span id="cb25-3">num_rows <span class="op" style="color: #5E5E5E;">=</span> <span class="dv" style="color: #AD0000;">3</span> </span>
+<span id="cb25-4"></span>
+<span id="cb25-5"></span>
+<span id="cb25-6">all_images <span class="op" style="color: #5E5E5E;">=</span> [] </span>
+<span id="cb25-7"><span class="cf" style="color: #003B4F;">for</span> _ <span class="kw" style="color: #003B4F;">in</span> <span class="bu" style="color: null;">range</span>(num_rows):</span>
+<span id="cb25-8">    images <span class="op" style="color: #5E5E5E;">=</span> pipe([prompt] <span class="op" style="color: #5E5E5E;">*</span> num_samples, num_inference_steps<span class="op" style="color: #5E5E5E;">=</span><span class="dv" style="color: #AD0000;">75</span>, guidance_scale<span class="op" style="color: #5E5E5E;">=</span><span class="fl" style="color: #AD0000;">7.5</span>, seed <span class="op" style="color: #5E5E5E;">=</span> <span class="st" style="color: #20794D;">'random'</span>).images</span>
+<span id="cb25-9">    all_images.extend(images)</span>
+<span id="cb25-10"></span>
+<span id="cb25-11">grid <span class="op" style="color: #5E5E5E;">=</span> image_grid(all_images, num_samples, num_rows)</span>
+<span id="cb25-12">grid </span></code></pre></div>
+</details>
+<div class="cell-output cell-output-stderr">
+<pre><code>The following part of your input was truncated because CLIP can only handle sequences up to 77 tokens: ['shot, illustration, art by greg rutkowski beeple and alphonse mucha', 'shot, illustration, art by greg rutkowski beeple and alphonse mucha', 'shot, illustration, art by greg rutkowski beeple and alphonse mucha']</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<script type="application/vnd.jupyter.widget-view+json">
+{"model_id":"a6c57de3c1b34f77b475f916761540ce","version_major":2,"version_minor":0}
+</script>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>The following part of your input was truncated because CLIP can only handle sequences up to 77 tokens: ['shot, illustration, art by greg rutkowski beeple and alphonse mucha', 'shot, illustration, art by greg rutkowski beeple and alphonse mucha', 'shot, illustration, art by greg rutkowski beeple and alphonse mucha']</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<script type="application/vnd.jupyter.widget-view+json">
+{"model_id":"0722c4031ac947afa2c10d2db67a7f6d","version_major":2,"version_minor":0}
+</script>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>The following part of your input was truncated because CLIP can only handle sequences up to 77 tokens: ['shot, illustration, art by greg rutkowski beeple and alphonse mucha', 'shot, illustration, art by greg rutkowski beeple and alphonse mucha', 'shot, illustration, art by greg rutkowski beeple and alphonse mucha']</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<script type="application/vnd.jupyter.widget-view+json">
+{"model_id":"98e6c54eb0b94198832327c75f3f08ad","version_major":2,"version_minor":0}
+</script>
+</div>
+<div class="cell-output cell-output-display" data-execution_count="37">
+<p><img src="https://prajwalsuresh.com/posts/2022-12-01-Dreambooth/03_pintu_dreambooth_files/figure-html/cell-24-output-7.png" class="img-fluid"></p>
+</div>
+</div>
+<figcaption align="center">
+<h4 class="anchored">
+Fig 8: A sks dog as god with a radiant halo, wings, detailed face, gorgeous, flowing hair, very muscular male body, partial anatomy, stormy and grand war scene, delicate and intricate borders for decoration, caesar victorious, proud Emperor, crepuscular ray, intricate, highly detailed, 8K, digital painting, fantasy, concept art, sharp focus, over-shoulder shot, illustration, art by greg rutkowski beeple and alphonse mucha
+</h4>
+</figcaption>
+<div class="cell" data-outputid="4f70024d-c843-4f4e-9c28-e1c594b5ac3f">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb29" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb29-1">prompt <span class="op" style="color: #5E5E5E;">=</span> <span class="st" style="color: #20794D;">"a sks dog as god with a radiant halo, wings, detailed face, gorgeous, flowing hair, very muscular male body, stormy and grand war scene, delicate and intricate borders for decoration, caesar victorious, proud Emperor, crepuscular ray, intricate, highly detailed, 8K, digital painting, fantasy, concept art, sharp focus, over-shoulder shot, illustration, art by greg rutkowski beeple and alphonse mucha"</span></span>
+<span id="cb29-2">num_samples <span class="op" style="color: #5E5E5E;">=</span> <span class="dv" style="color: #AD0000;">3</span> </span>
+<span id="cb29-3">num_rows <span class="op" style="color: #5E5E5E;">=</span> <span class="dv" style="color: #AD0000;">3</span> </span>
+<span id="cb29-4"></span>
+<span id="cb29-5"></span>
+<span id="cb29-6">all_images <span class="op" style="color: #5E5E5E;">=</span> [] </span>
+<span id="cb29-7"><span class="cf" style="color: #003B4F;">for</span> _ <span class="kw" style="color: #003B4F;">in</span> <span class="bu" style="color: null;">range</span>(num_rows):</span>
+<span id="cb29-8">    images <span class="op" style="color: #5E5E5E;">=</span> pipe([prompt] <span class="op" style="color: #5E5E5E;">*</span> num_samples, num_inference_steps<span class="op" style="color: #5E5E5E;">=</span><span class="dv" style="color: #AD0000;">75</span>, guidance_scale<span class="op" style="color: #5E5E5E;">=</span><span class="fl" style="color: #AD0000;">7.5</span>, seed <span class="op" style="color: #5E5E5E;">=</span> <span class="st" style="color: #20794D;">'random'</span>).images</span>
+<span id="cb29-9">    all_images.extend(images)</span>
+<span id="cb29-10"></span>
+<span id="cb29-11">grid <span class="op" style="color: #5E5E5E;">=</span> image_grid(all_images, num_samples, num_rows)</span>
+<span id="cb29-12">grid </span></code></pre></div>
+</details>
+<div class="cell-output cell-output-stderr">
+<pre><code>The following part of your input was truncated because CLIP can only handle sequences up to 77 tokens: [', art by greg rutkowski beeple and alphonse mucha', ', art by greg rutkowski beeple and alphonse mucha', ', art by greg rutkowski beeple and alphonse mucha']</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<script type="application/vnd.jupyter.widget-view+json">
+{"model_id":"7fadabeeb011425bbd556b2f71905ec5","version_major":2,"version_minor":0}
+</script>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>The following part of your input was truncated because CLIP can only handle sequences up to 77 tokens: [', art by greg rutkowski beeple and alphonse mucha', ', art by greg rutkowski beeple and alphonse mucha', ', art by greg rutkowski beeple and alphonse mucha']</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<script type="application/vnd.jupyter.widget-view+json">
+{"model_id":"63624ca2bc654d0cb58ef9d8bdb74854","version_major":2,"version_minor":0}
+</script>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>The following part of your input was truncated because CLIP can only handle sequences up to 77 tokens: [', art by greg rutkowski beeple and alphonse mucha', ', art by greg rutkowski beeple and alphonse mucha', ', art by greg rutkowski beeple and alphonse mucha']</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<script type="application/vnd.jupyter.widget-view+json">
+{"model_id":"44c028735e854b1e8e2e5bb6c62f19b3","version_major":2,"version_minor":0}
+</script>
+</div>
+<div class="cell-output cell-output-display" data-execution_count="38">
+<p><img src="https://prajwalsuresh.com/posts/2022-12-01-Dreambooth/03_pintu_dreambooth_files/figure-html/cell-25-output-7.png" class="img-fluid"></p>
+</div>
+</div>
+<figcaption align="center">
+<h4 class="anchored">
+Fig 9: A sks dog as god with a radiant halo, wings, detailed face, gorgeous, flowing hair, very muscular male body, stormy and grand war scene, delicate and intricate borders for decoration, caesar victorious, proud Emperor, crepuscular ray, intricate, highly detailed, 8K, digital painting, fantasy, concept art, sharp focus, over-shoulder shot, illustration, art by greg rutkowski beeple and alphonse mucha
+</h4>
+</figcaption>
+</section>
+<section id="pushing-your-model-to-hub" class="level1" data-number="6">
+<h1 data-number="6"><span class="header-section-number">6</span> Pushing your model to hub</h1>
+<p>HuggingFace Hub is a platform with over 60K models, 6K datasets and 6K demo apps(spaces) all open source and publicly available. The best part is that sharing and using any public model on the Hub is completely free of cost. Let’s next see how we can move our model from Google Drive to HuggingFace Hub. In order to push model to hub, make sure that you have used Access token with write permission while authenticating to HuggingFace</p>
+<p>The <code>get_full_repo_name</code> returns the repository name for given model in user’s namespace ({username/model_name}).</p>
+<div class="cell" data-execution_count="7">
+<div class="sourceCode cell-code" id="cb33" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb33-1"><span class="im" style="color: #00769E;">from</span> huggingface_hub <span class="im" style="color: #00769E;">import</span> get_full_repo_name</span>
+<span id="cb33-2">model_name <span class="op" style="color: #5E5E5E;">=</span> <span class="st" style="color: #20794D;">"pintu_dreambooth"</span></span></code></pre></div>
+</div>
+<div class="cell" data-outputid="bad2c214-4582-4311-d891-0c1a95baf02a" data-execution_count="8">
+<div class="sourceCode cell-code" id="cb34" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb34-1">hub_model <span class="op" style="color: #5E5E5E;">=</span> get_full_repo_name(model_name)</span>
+<span id="cb34-2">hub_model</span></code></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="8">
+<pre><code>'prajwal13/pintu_dreambooth'</code></pre>
+</div>
+</div>
+<div class="cell" data-execution_count="10">
+<div class="sourceCode cell-code" id="cb36" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb36-1">output_dir <span class="op" style="color: #5E5E5E;">=</span> <span class="st" style="color: #20794D;">"/content/gdrive/My Drive/pintu_dreambooth"</span></span>
+<span id="cb36-2">images_folder <span class="op" style="color: #5E5E5E;">=</span> <span class="st" style="color: #20794D;">"/content/gdrive/My Drive/pintu"</span></span>
+<span id="cb36-3">torch_device <span class="op" style="color: #5E5E5E;">=</span> <span class="st" style="color: #20794D;">"cuda"</span> <span class="cf" style="color: #003B4F;">if</span> torch.cuda.is_available() <span class="cf" style="color: #003B4F;">else</span> <span class="st" style="color: #20794D;">"cpu"</span></span></code></pre></div>
+</div>
+<p>We can then use <code>create_repo</code> to create an empty directory in HuggingFace hub and push our model and the images used for training to the empty repo.</p>
+<div class="cell" data-outputid="0ebe4159-10a0-48aa-ba3a-b7673b7239d9">
+<div class="sourceCode cell-code" id="cb37" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb37-1"><span class="im" style="color: #00769E;">from</span> huggingface_hub <span class="im" style="color: #00769E;">import</span> HfApi, create_repo</span>
+<span id="cb37-2"></span>
+<span id="cb37-3">create_repo(hub_model)</span>
+<span id="cb37-4">api <span class="op" style="color: #5E5E5E;">=</span> HfApi()</span>
+<span id="cb37-5">api.upload_folder(folder_path<span class="op" style="color: #5E5E5E;">=</span>output_dir, path_in_repo<span class="op" style="color: #5E5E5E;">=</span><span class="st" style="color: #20794D;">""</span>, repo_id<span class="op" style="color: #5E5E5E;">=</span>hub_model)</span></code></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="9">
+<pre><code>'https://huggingface.co/prajwal13/pintu_dreambooth/tree/main/'</code></pre>
+</div>
+</div>
+<div class="cell" data-outputid="9690eb5f-cdc5-47dc-a613-977ff9646dc1">
+<div class="sourceCode cell-code" id="cb39" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb39-1">api.upload_folder(folder_path<span class="op" style="color: #5E5E5E;">=</span>images_folder, path_in_repo<span class="op" style="color: #5E5E5E;">=</span><span class="st" style="color: #20794D;">"concept_images"</span>,repo_id<span class="op" style="color: #5E5E5E;">=</span>hub_model)</span></code></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="10">
+<pre><code>'https://huggingface.co/prajwal13/pintu_dreambooth/tree/main/concept_images'</code></pre>
+</div>
+</div>
+<p>The last thing to do is create a model card so that our model can easily be found on the Hub. We will also add the images used to train in the model card</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb41" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb41-1"><span class="im" style="color: #00769E;">from</span> huggingface_hub <span class="im" style="color: #00769E;">import</span> ModelCard</span>
+<span id="cb41-2"><span class="im" style="color: #00769E;">import</span> os</span>
+<span id="cb41-3"></span>
+<span id="cb41-4">images_upload <span class="op" style="color: #5E5E5E;">=</span> os.listdir(images_folder)</span>
+<span id="cb41-5">image_string <span class="op" style="color: #5E5E5E;">=</span> <span class="st" style="color: #20794D;">""</span></span>
+<span id="cb41-6"></span>
+<span id="cb41-7"><span class="cf" style="color: #003B4F;">for</span> i, image <span class="kw" style="color: #003B4F;">in</span> <span class="bu" style="color: null;">enumerate</span>(images_upload):</span>
+<span id="cb41-8">    image_string <span class="op" style="color: #5E5E5E;">=</span> <span class="ss" style="color: #20794D;">f'''</span><span class="sc" style="color: #5E5E5E;">{</span>image_string<span class="sc" style="color: #5E5E5E;">}</span><span class="ss" style="color: #20794D;">![sks </span><span class="sc" style="color: #5E5E5E;">{</span>i<span class="sc" style="color: #5E5E5E;">}</span><span class="ss" style="color: #20794D;">](https://huggingface.co/</span><span class="sc" style="color: #5E5E5E;">{</span>hub_model<span class="sc" style="color: #5E5E5E;">}</span><span class="ss" style="color: #20794D;">/resolve/main/concept_images/</span><span class="sc" style="color: #5E5E5E;">{</span>image<span class="sc" style="color: #5E5E5E;">}</span><span class="ss" style="color: #20794D;">)'''</span></span>
+<span id="cb41-9"></span>
+<span id="cb41-10">image_string</span></code></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb42" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb42-1">content <span class="op" style="color: #5E5E5E;">=</span> <span class="ss" style="color: #20794D;">f"""</span></span>
+<span id="cb42-2"><span class="ss" style="color: #20794D;">---</span></span>
+<span id="cb42-3"><span class="ss" style="color: #20794D;">license: mit</span></span>
+<span id="cb42-4"><span class="ss" style="color: #20794D;">tags:</span></span>
+<span id="cb42-5"><span class="ss" style="color: #20794D;">- pytorch</span></span>
+<span id="cb42-6"><span class="ss" style="color: #20794D;">- diffusers</span></span>
+<span id="cb42-7"><span class="ss" style="color: #20794D;">- dreambooth</span></span>
+<span id="cb42-8"><span class="ss" style="color: #20794D;">---</span></span>
+<span id="cb42-9"></span>
+<span id="cb42-10"><span class="ss" style="color: #20794D;"># Model Card for Dreambooth model trained on My pet Pintu's images</span></span>
+<span id="cb42-11"></span>
+<span id="cb42-12"><span class="ss" style="color: #20794D;">This model is a diffusion model for unconditional image generation of my cute pet dog Pintu trained using Dreambooth concept. The token to use is sks .</span></span>
+<span id="cb42-13"></span>
+<span id="cb42-14"><span class="ss" style="color: #20794D;">## Usage</span></span>
+<span id="cb42-15"></span>
+<span id="cb42-16"><span class="ss" style="color: #20794D;">from diffusers import StableDiffusionPipeline</span></span>
+<span id="cb42-17"><span class="ss" style="color: #20794D;">pipeline = StableDiffusionPipeline.from_pretrained(</span><span class="sc" style="color: #5E5E5E;">{</span>hub_model<span class="sc" style="color: #5E5E5E;">}</span><span class="ss" style="color: #20794D;">)</span></span>
+<span id="cb42-18"><span class="ss" style="color: #20794D;">image = pipeline('a photo of sks dog').images[0]</span></span>
+<span id="cb42-19"><span class="ss" style="color: #20794D;">image</span></span>
+<span id="cb42-20"></span>
+<span id="cb42-21"><span class="ss" style="color: #20794D;">These are the images on which the dreambooth model is trained on</span></span>
+<span id="cb42-22"></span>
+<span id="cb42-23"><span class="sc" style="color: #5E5E5E;">{</span>image_string<span class="sc" style="color: #5E5E5E;">}</span></span>
+<span id="cb42-24"></span>
+<span id="cb42-25"><span class="ss" style="color: #20794D;">"""</span></span></code></pre></div>
+</div>
+<div class="cell" data-outputid="afe9cc07-8127-46f3-ecfe-a7e7347093c5">
+<div class="sourceCode cell-code" id="cb43" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb43-1">card <span class="op" style="color: #5E5E5E;">=</span> ModelCard(content)</span>
+<span id="cb43-2">card.push_to_hub(hub_model)</span></code></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="13">
+<pre><code>'https://huggingface.co/prajwal13/pintu_dreambooth/blob/main/README.md'</code></pre>
+</div>
+</div>
+<p>Now we can directly load the model from HuggingFace Hub by passing the repo id to the pipeline</p>
+<div class="cell" data-outputid="218593dd-3526-4188-e0f3-3459f0c768dc" data-execution_count="22">
+<div class="sourceCode cell-code" id="cb45" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb45-1"><span class="im" style="color: #00769E;">from</span> diffusers <span class="im" style="color: #00769E;">import</span> StableDiffusionPipeline</span>
+<span id="cb45-2"></span>
+<span id="cb45-3">pipeline <span class="op" style="color: #5E5E5E;">=</span> StableDiffusionPipeline.from_pretrained(hub_model).to(torch_device)</span>
+<span id="cb45-4">image <span class="op" style="color: #5E5E5E;">=</span> pipeline(<span class="st" style="color: #20794D;">"a photo of sks dog wearing glasses, and standing near beach"</span>).images[<span class="dv" style="color: #AD0000;">0</span>]</span>
+<span id="cb45-5">image</span></code></pre></div>
+<div class="cell-output cell-output-display">
+<script type="application/vnd.jupyter.widget-view+json">
+{"version_major":2,"version_minor":0,"model_id":"5639083cdc9c4162aae5cd5faa789696"}
+</script>
+</div>
+<div class="cell-output cell-output-display">
+<script type="application/vnd.jupyter.widget-view+json">
+{"version_major":2,"version_minor":0,"model_id":"68480a11b2fc4946add1a2c815310bd2"}
+</script>
+</div>
+<div class="cell-output cell-output-display" data-execution_count="22">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="https://prajwalsuresh.com/posts/2022-12-01-Dreambooth/03_pintu_dreambooth_files/figure-html/cell-34-output-3.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="conclusion" class="level1" data-number="7">
+<h1 data-number="7"><span class="header-section-number">7</span> Conclusion</h1>
+<p>In this post, we learnt about Dreambooth and how we can personalize the Stable Diffusion model. We also learnt how to push our model to HuggingFace hub.</p>
+<p>I hope you enjoyed reading it. If there is any feedback, feel free to reach out on <a href="https://www.linkedin.com/in/prajwal-s-1416061b3/">LinkedIn</a> or on <a href="mailto:prajwalsuresh13@gmail.com">mail</a></p>
+</section>
+<section id="references" class="level1" data-number="8">
+<h1 data-number="8"><span class="header-section-number">8</span> References</h1>
+<ul>
+<li><a href="https://www.fast.ai/posts/part2-2022-preview.html">FastAI course</a></li>
+<li><a href="https://dreambooth.github.io/">Dreambooth paper</a></li>
+<li><a href="https://github.com/huggingface/notebooks/blob/main/diffusers/sd_dreambooth_training.ipynb">HuggingFace Dreambooth notebook</a></li>
+</ul>
+
+
+</section>
+
+ ]]></description>
+  <category>Stable Diffusion</category>
+  <guid>https://prajwalsuresh.com/posts/2022-12-01-Dreambooth/03_pintu_dreambooth.html</guid>
+  <pubDate>Wed, 30 Nov 2022 18:30:00 GMT</pubDate>
+  <media:content url="https://prajwalsuresh.com/posts/2022-12-01-Dreambooth/01.png" medium="image" type="image/png" height="148" width="144"/>
+</item>
+<item>
+  <title>Stable diffusion - Negative Prompt, Image to Image &amp; Textual Inversion</title>
+  <dc:creator>Prajwal Suresh</dc:creator>
+  <link>https://prajwalsuresh.com/posts/2022-11-24-StableDiffusionVariations/02_stable_diffusion_variations.html</link>
   <description><![CDATA[ 
 
 
@@ -22,12 +841,13 @@
 <blockquote class="blockquote">
 <p>Introduction to variations provided in 🤗 <a href="https://huggingface.co/">Hugging face</a> - <a href="https://github.com/huggingface/diffusers">Diffusers library</a> such as Negative prompt, Image to Image and training new concept using Textual Inversion</p>
 </blockquote>
+<br>
 <div data-align="center">
-<p><a href="https://colab.research.google.com/github/prajwal-suresh13/image_colorization/blob/master/image_colorization_cyclegan_training.ipynb"> <img src="https://prajwalsuresh.com/posts/2022-11-22-StableDiffusionVariations/https:/colab.research.google.com/assets/colab-badge.svg" width="150"> </a></p>
+<p><a href="https://colab.research.google.com/github/prajwal-suresh13/diffusion/blob/master/02_stable_diffusion_variations.ipynb"> <img src="https://prajwalsuresh.com/posts/2022-11-24-StableDiffusionVariations/https:/colab.research.google.com/assets/colab-badge.svg" width="150"> </a></p>
 </div>
 <p><br></p>
-<p>This is the second post on Stable Diffusion. Check out the previous post through link below if you haven’t read it yet<br> 1. <strong>Part 1</strong> - <a href="https://aayushmnit.com/posts/2022-11-02-StabeDiffusionP1/2022-11-02-StableDiffusionP1.html">Stable diffusion using 🤗 Hugging Face - Introduction</a>.</p>
-<p>In previous post, we learnt about Stable Diffusion and its key components VAE, UNet, Scheduler &amp; CLIPTextModel. We also built a pipeline named <code>SDPipeline</code> using these key components and generated images for multiple prompts. In this post, we will further modify our pipeline to work for negative prompts and image to image. At the end, we will learn about Textual Inversion which is useful to train a new concept</p>
+<p>This is the second post on Stable Diffusion. Check out the previous post through link below if you haven’t read it yet <br><br> 1. <strong>Part 1</strong> - <a href="https://prajwal-suresh13.github.io/website/posts/2022-11-22-StableDiffusionIntro/01_stable_diffusion_introduction.html">Stable diffusion - Introduction</a>.<br></p>
+<p>In previous post, we learnt about Stable Diffusion and its key components VAE, UNet, Scheduler &amp; CLIPTextModel. We also built a pipeline named <code>SDPipeline</code> using these key components and generated images for multiple prompts. In this post, we will further modify our pipeline to integrate negative prompts and image to image. At the end, we will learn about Textual Inversion which is useful to train a new concept</p>
 <p>At first, let’s download and import the required libraries, authenticate and login to HuggingFace</p>
 <div class="cell" data-outputid="228d7dd1-4ac9-48fa-cf2c-b066c593be9f">
 <details>
@@ -151,7 +971,7 @@
 <h2 data-number="1.1" class="anchored" data-anchor-id="what-is-negative-prompt"><span class="header-section-number">1.1</span> What is Negative Prompt?</h2>
 <p>Negative prompt is an additional capability which removes anything that the user doesn’t want to see in generated images. Suppose you don’t want a particular color or particular object to be part of the generated images, you can mention it in <code>negative_prompt</code> argument in the <code>StableDiffusionPipeline</code>.</p>
 <figure align="center" class="figure">
-<img src="https://prajwalsuresh.com/posts/2022-11-22-StableDiffusionVariations/https:/miro.medium.com/max/828/0*wnoQYUZJiCwhtUTg.webp" width="800" class="figure-img">
+<img src="https://prajwalsuresh.com/posts/2022-11-24-StableDiffusionVariations/https:/miro.medium.com/max/828/0*wnoQYUZJiCwhtUTg.webp" width="800" class="figure-img">
 <figcaption align="center" class="figure-caption">
 <h4 class="anchored">
 Fig 1 : Example for Negative Prompt <a href="https://towardsdatascience.com/stable-diffusion-using-hugging-face-variations-of-stable-diffusion-56fd2ab7a265">(Image Credit)</a>
@@ -164,7 +984,7 @@ Fig 1 : Example for Negative Prompt <a href="https://towardsdatascience.com/stab
 <p>Let’s find how the negative prompt works and how can we integrate it into our pipeline.</p>
 <p>In the previous post, we used an empty string, generated unconditional embeddings from it and used it along with text embeddings to implement Classifier-Free guidance as below</p>
 <pre><code>uncond = self.encode_text([""]*batch_size, cond.shape[1])</code></pre>
-<p>The way negative prompt works is that the empty string is replaced by the string containing the objects, styles or colors provided by the user which they don’t want to be present in the generated images. So to implement negative prompt, we can modify our code to use empty string if negative prompts is not provided else to use negative prompt provided by user</p>
+<p>The way negative prompt works is that the empty string is replaced by the string containing the objects, styles or colors provided by the user as negative prompt. So to implement negative prompt, we can modify our code to use empty string if negative prompt is not provided else to use negative prompt provided by user</p>
 <pre><code>if not negative_prompts:
     uncond = self.encode_text([""]*batch_size, cond.shape[1])
 else:
@@ -243,7 +1063,7 @@ else:
 <div class="cell-output cell-output-display" data-execution_count="41">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="https://prajwalsuresh.com/posts/2022-11-22-StableDiffusionVariations/02_stable_diffusion_variations_files/figure-html/cell-14-output-1.png" class="img-fluid figure-img"></p>
+<p><img src="https://prajwalsuresh.com/posts/2022-11-24-StableDiffusionVariations/02_stable_diffusion_variations_files/figure-html/cell-14-output-1.png" class="img-fluid figure-img"></p>
 </figure>
 </div>
 </div>
@@ -261,11 +1081,11 @@ Fig 2: Negative Prompt Results for prompt “a photo of a forest with trees and 
 <section id="adding-image-to-image-capability-to-sdpipeline" class="level2" data-number="2.1">
 <h2 data-number="2.1" class="anchored" data-anchor-id="adding-image-to-image-capability-to-sdpipeline"><span class="header-section-number">2.1</span> Adding Image to Image capability to SDPipeline</h2>
 <p>In the previous post, we learnt that we can also pass an image to our model and it generates new images using the provided image as the initial image along with the prompt. There are two scenarios 1) with image (Image to Image) 2) without image (Prompt to Image)</p>
-<p>For scenario 1 which is Image to Image pipeline, we expect 2 parameters: 1. init_image - This is used as the initial image 2. strength - The value of this parameter is between 0 and 1</p>
+<p>For scenario 1 which is Image to Image pipeline, we expect 2 parameters:<br> 1. <code>init_image</code> - This is used as the initial image<br> 2. <code>strength</code> - The value of this parameter is between 0 and 1<br></p>
 <p>First, the provided init_image is passed to the VAE’s encoder to generate latents. We then need to add noise to the latents. Since we are using initial image we can reduce the number of inference steps. The <code>strength</code> parameter is used for this and higher its value higher the <code>inference_steps</code>. If we want our generated image to be similar to the init_image, the number of steps should be less so the <code>strength</code> parameter value should also be less. The amount of noise to be added is calculated by multiplying the <code>strength</code> and <code>inference_steps</code></p>
 <p>For example, suppose we want our generated image to be similar to the initial image so we assign the <code>strength</code> parameter to 0.4 and <code>inference_steps</code> is equal to 50 . Then the noise added is for the step 30 (<code>50 -( 0.4 x 50) == 30</code>). The <code>inference_steps</code> is reduced to 20 steps (<code>50x0.4</code>)</p>
 <p>For scenario 2 which is prompt to image, we need to create a random noise. The amount of noise for the first step is multiplied with <code>scheduler.init_noise_sigma</code> . The <code>inference_steps</code> remains same.</p>
-<p>Let’s create a function which can handle both the scenarios. The function should return latents and timesteps. <br> 1. In case of Prompt to Image, random noise is created and multiplied with init_noise is returned. The timesteps is returned without modifying it 2. In case of Image to Image, latents are created from init_image and amount of noise to be added is calculated using strength and returned. The timesteps is also reduced based on the strength and returned</p>
+<p>Let’s create a function which can handle both the scenarios. The function should return latents and timesteps. <br> 1. In case of Prompt to Image, random noise is created and multiplied with init_noise is returned. The timesteps is returned without modifying it<br> 2. In case of Image to Image, latents are created from init_image and amount of noise to be added is calculated using strength and returned. The timesteps is also reduced based on the strength and returned</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb16" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><span class="kw" style="color: #003B4F;">def</span> create_latents(<span class="va" style="color: #111111;">self</span>, batch_size, init_image, strength, inference_steps):</span>
 <span id="cb16-2">    </span>
@@ -336,7 +1156,7 @@ Fig 2: Negative Prompt Results for prompt “a photo of a forest with trees and 
 <span id="cb17-42"></span>
 <span id="cb17-43">SDPipeline.<span class="fu" style="color: #4758AB;">__call__</span> <span class="op" style="color: #5E5E5E;">=</span> diff_pipeline_img2img</span></code></pre></div>
 </div>
-<p>Now let’s download an image pass it to our Image To Image pipeline</p>
+<p>Now let’s download an image and pass it to our Image To Image pipeline</p>
 <div class="cell" data-outputid="d83aa588-e356-427f-8573-92ee3e0d5359">
 <div class="sourceCode cell-code" id="cb18" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><span class="im" style="color: #00769E;">from</span> fastdownload <span class="im" style="color: #00769E;">import</span> FastDownload</span>
 <span id="cb18-2">p <span class="op" style="color: #5E5E5E;">=</span> FastDownload().download(<span class="st" style="color: #20794D;">'https://s3.amazonaws.com/moonup/production/uploads/1664665907257-noauth.png'</span>)</span>
@@ -371,7 +1191,7 @@ Fig 2: Negative Prompt Results for prompt “a photo of a forest with trees and 
 <div class="cell-output cell-output-display" data-execution_count="11">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="https://prajwalsuresh.com/posts/2022-11-22-StableDiffusionVariations/02_stable_diffusion_variations_files/figure-html/cell-17-output-3.png" class="img-fluid figure-img"></p>
+<p><img src="https://prajwalsuresh.com/posts/2022-11-24-StableDiffusionVariations/02_stable_diffusion_variations_files/figure-html/cell-17-output-3.png" class="img-fluid figure-img"></p>
 </figure>
 </div>
 </div>
@@ -462,7 +1282,7 @@ Fig 3: Initial Image for Image To Image Pipeline
 <div class="cell-output cell-output-display" data-execution_count="14">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="https://prajwalsuresh.com/posts/2022-11-22-StableDiffusionVariations/02_stable_diffusion_variations_files/figure-html/cell-20-output-2.png" class="img-fluid figure-img"></p>
+<p><img src="https://prajwalsuresh.com/posts/2022-11-24-StableDiffusionVariations/02_stable_diffusion_variations_files/figure-html/cell-20-output-2.png" class="img-fluid figure-img"></p>
 </figure>
 </div>
 </div>
@@ -477,14 +1297,14 @@ Fig 4: Generated Image for Image To Image pipeline
 <span id="cb22-2">imgs <span class="op" style="color: #5E5E5E;">=</span>[img <span class="cf" style="color: #003B4F;">for</span> i <span class="kw" style="color: #003B4F;">in</span> <span class="bu" style="color: null;">range</span>(<span class="bu" style="color: null;">len</span>(prompt)) <span class="cf" style="color: #003B4F;">for</span> img <span class="kw" style="color: #003B4F;">in</span> lc.imgs[i]]</span>
 <span id="cb22-3">image_grid(imgs, rows<span class="op" style="color: #5E5E5E;">=</span>rows, cols<span class="op" style="color: #5E5E5E;">=</span>cols)</span></code></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="15">
-<p><img src="https://prajwalsuresh.com/posts/2022-11-22-StableDiffusionVariations/02_stable_diffusion_variations_files/figure-html/cell-21-output-1.png" class="img-fluid"></p>
+<p><img src="https://prajwalsuresh.com/posts/2022-11-24-StableDiffusionVariations/02_stable_diffusion_variations_files/figure-html/cell-21-output-1.png" class="img-fluid"></p>
 </div>
 </div>
 </section>
 </section>
 <section id="using-both-image-to-image-and-negative-prompt" class="level1" data-number="3">
 <h1 data-number="3"><span class="header-section-number">3</span> Using both Image to Image and Negative Prompt</h1>
-<p>Let’s use both Image to Image and Negative prompt in the next example. We will download a picture of sunflower vase and pass it ot Image to Image pipeline to convert it to a Rose vase. We will remove yellow color from the generated image using negative prompt</p>
+<p>Let’s use both Image to Image and Negative prompt in the next example. We will download a picture of sunflower vase and pass it to Image to Image pipeline to convert it to a Rose vase. We will remove yellow color from the generated image using negative prompt</p>
 <div class="cell" data-outputid="28405071-a649-4ea9-c523-f44d3cc979fd">
 <div class="sourceCode cell-code" id="cb23" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><span class="im" style="color: #00769E;">from</span> fastdownload <span class="im" style="color: #00769E;">import</span> FastDownload</span>
 <span id="cb23-2">p <span class="op" style="color: #5E5E5E;">=</span> FastDownload().download(<span class="st" style="color: #20794D;">'https://img.freepik.com/premium-photo/oil-painting-yellow-flowers-sunflowers-vase-yellow-oil-paints_175677-2889.jpg?w=2000'</span>)</span>
@@ -519,7 +1339,7 @@ Fig 4: Generated Image for Image To Image pipeline
 <div class="cell-output cell-output-display" data-execution_count="31">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="https://prajwalsuresh.com/posts/2022-11-22-StableDiffusionVariations/02_stable_diffusion_variations_files/figure-html/cell-22-output-3.png" class="img-fluid figure-img"></p>
+<p><img src="https://prajwalsuresh.com/posts/2022-11-24-StableDiffusionVariations/02_stable_diffusion_variations_files/figure-html/cell-22-output-3.png" class="img-fluid figure-img"></p>
 </figure>
 </div>
 </div>
@@ -542,7 +1362,7 @@ Fig 5: Initial Image of Sunflower vase
 <div class="cell-output cell-output-display" data-execution_count="57">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="https://prajwalsuresh.com/posts/2022-11-22-StableDiffusionVariations/02_stable_diffusion_variations_files/figure-html/cell-23-output-2.png" class="img-fluid figure-img"></p>
+<p><img src="https://prajwalsuresh.com/posts/2022-11-24-StableDiffusionVariations/02_stable_diffusion_variations_files/figure-html/cell-23-output-2.png" class="img-fluid figure-img"></p>
 </figure>
 </div>
 </div>
@@ -559,7 +1379,7 @@ Fig 6: Generated Image of Rose vase for initial image of sunflower vase and Nega
 <p>Textual Inversion is a process to teach a new word to the text model and get its embeddings close to the visual representation of the image. This is achieved by adding a new token to the vocabulary, freezing the weights of all the models except the text encoder and train with the images.</p>
 <p>This is a schematic representation of the process by the authors of the <a href="https://textual-inversion.github.io/">Textual Inversion paper</a></p>
 <figure align="center" class="figure">
-<img src="https://prajwalsuresh.com/posts/2022-11-22-StableDiffusionVariations/https:/textual-inversion.github.io/static/images/training/training.JPG" width="800" class="figure-img">
+<img src="https://prajwalsuresh.com/posts/2022-11-24-StableDiffusionVariations/https:/textual-inversion.github.io/static/images/training/training.JPG" width="800" class="figure-img">
 <figcaption align="center" class="figure-caption">
 <h4 class="anchored" data-anchor-id="textual-inversion">
 Fig 7 : Textual Inversion diagram <a href="https://textual-inversion.github.io/">(Image Credit)</a>
@@ -694,7 +1514,11 @@ Fig 7 : Textual Inversion diagram <a href="https://textual-inversion.github.io/"
 </script>
 </div>
 <div class="cell-output cell-output-display" data-execution_count="31">
-<p><img src="https://prajwalsuresh.com/posts/2022-11-22-StableDiffusionVariations/02_stable_diffusion_variations_files/figure-html/cell-29-output-2.png" class="img-fluid"></p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="https://prajwalsuresh.com/posts/2022-11-24-StableDiffusionVariations/02_stable_diffusion_variations_files/figure-html/cell-29-output-2.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
 </div>
 </div>
 <figcaption align="center">
@@ -705,8 +1529,8 @@ Fig 8: Using new token generated using Textual Inversion in prompt
 </section>
 <section id="conclusion" class="level1" data-number="5">
 <h1 data-number="5"><span class="header-section-number">5</span> Conclusion</h1>
-<p>In this post, we have covered a brief introduction on variation provided by the diffusers library such as negative prompt and Image To Image. We then implemented both in our <code>SDPipeline</code>. We also saw how we can train a new concept using Textual Inversion.</p>
-<p>I hope you enjoyed reading it. If there is any feedback, feel free to reach out on <a href="https://www.linkedin.com/in/prajwal-s-1416061b3/">Linkedin</a> or on <a href="prajwalsuresh13@gmail.com">mail</a></p>
+<p>In this post, we have covered a brief introduction on variation provided by the diffusers library such as negative prompt and Image To Image. We then implemented both in our <code>SDPipeline</code>. We also saw how we can train a new concept using Textual Inversion. In the <a href="https://prajwal-suresh13.github.io/website/posts/2022-12-01-Dreambooth/03_pintu_dreambooth.html">next post</a> we will be learning about Dreambooth which is used to train a new concept and push our trained model to HuggingFace Hub</p>
+<p>I hope you enjoyed reading it. If there is any feedback, feel free to reach out on <a href="https://www.linkedin.com/in/prajwal-s-1416061b3/">LinkedIn</a> or on <a href="mailto:prajwalsuresh13@gmail.com">mail</a></p>
 </section>
 <section id="references" class="level1" data-number="6">
 <h1 data-number="6"><span class="header-section-number">6</span> References</h1>
@@ -720,12 +1544,12 @@ Fig 8: Using new token generated using Textual Inversion in prompt
 
  ]]></description>
   <category>Stable Diffusion</category>
-  <guid>https://prajwalsuresh.com/posts/2022-11-22-StableDiffusionVariations/02_stable_diffusion_variations.html</guid>
+  <guid>https://prajwalsuresh.com/posts/2022-11-24-StableDiffusionVariations/02_stable_diffusion_variations.html</guid>
   <pubDate>Wed, 23 Nov 2022 18:30:00 GMT</pubDate>
-  <media:content url="https://prajwalsuresh.com/posts/2022-11-22-StableDiffusionVariations/01.png" medium="image" type="image/png" height="144" width="144"/>
+  <media:content url="https://prajwalsuresh.com/posts/2022-11-24-StableDiffusionVariations/01.png" medium="image" type="image/png" height="144" width="144"/>
 </item>
 <item>
-  <title>Stable diffusion using 🤗 Hugging Face - Introduction</title>
+  <title>Stable diffusion - Introduction</title>
   <dc:creator>Prajwal Suresh</dc:creator>
   <link>https://prajwalsuresh.com/posts/2022-11-22-StableDiffusionIntro/01_stable_diffusion_introduction.html</link>
   <description><![CDATA[ 
@@ -735,11 +1559,12 @@ Fig 8: Using new token generated using Textual Inversion in prompt
 <blockquote class="blockquote">
 <p>Introduction to using 🤗 <a href="https://huggingface.co/">Hugging face</a> - <a href="https://github.com/huggingface/diffusers">Diffusers library</a> for Stable Diffusion, looking into the core components and implementing StableDiffusionPipeline using it</p>
 </blockquote>
+<br>
 <div data-align="center">
-<p><a href="https://colab.research.google.com/github/prajwal-suresh13/image_colorization/blob/master/image_colorization_cyclegan_training.ipynb"> <img src="https://prajwalsuresh.com/posts/2022-11-22-StableDiffusionIntro/https:/colab.research.google.com/assets/colab-badge.svg" width="150"> </a></p>
+<p><a href="https://colab.research.google.com/github/prajwal-suresh13/diffusion/blob/master/01_stable_diffusion_introduction.ipynb"> <img src="https://prajwalsuresh.com/posts/2022-11-22-StableDiffusionIntro/https:/colab.research.google.com/assets/colab-badge.svg" width="150"> </a></p>
 </div>
 <p><br></p>
-<p>In this post I will give an introduction on using 🤗 Diffusers library to generate images using texts as input. This blog is based on the knowledge acquired while doing the <a href="https://www.fast.ai/posts/part2-2022.html"><em>‘From Deep learning foundations to Stable Diffusion’</em></a> course by <a href="https://www.fast.ai/posts/part2-2022.html">FastAI</a> . The first few lessons of the FastAI course are publicly available <a href="https://www.fast.ai/posts/part2-2022-preview.html">here</a>. Until the rest of the lessons are available, you can also checkout the first part of the <a href="https://course.fast.ai/">course</a> which is one of the best Deep Learning courses</p>
+<p>In this post I will give an introduction on using 🤗 Diffusers library to generate images using texts as input. This post is based on the knowledge acquired while doing the <a href="https://www.fast.ai/posts/part2-2022.html"><em>‘From Deep learning foundations to Stable Diffusion’</em></a> course by <a href="https://www.fast.ai/posts/part2-2022.html">FastAI</a> . The first few lessons of the FastAI course are publicly available <a href="https://www.fast.ai/posts/part2-2022-preview.html">here</a>. Until the rest of the lessons are available, you can also checkout the first part of the <a href="https://course.fast.ai/">course</a> which is one of the best Deep Learning courses</p>
 <p>At first, let’s install the diffusers library</p>
 <div class="cell" data-outputid="fb0ef25e-0a88-488c-ff87-366216258407">
 <div class="sourceCode cell-code" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><span class="op" style="color: #5E5E5E;">!</span>pip install <span class="op" style="color: #5E5E5E;">-</span>Uq accelerate transformers diffusers ftfy</span></code></pre></div>
@@ -1302,8 +2127,8 @@ Fig 10 : Diffusion process <a href="https://medium.com/towards-data-science/stab
 Now that we have understood the core components of the StableDiffusion, let’s summarize the diffusion process<br> 1. The prompts provided by the end user is converted to embeddings by the CLIPTextModel<br> 2. If input image is provided, <br>  - It is converted to latents by the VAE’s encoder and combined with noise from the Scheduler. <br> Else,<br>  - Random noise is generated and combined with noise from the Scheduler <br> 3. The embeddings (textual and unconditional) and the latents are provided as input to the UNet along with the current timestep <br> 4. UNet predicts noise and this noise is removed from the latents. This process is repeated N times ie num_inference_steps <br> 5. The latents produced by the UNet are passed to VAE’s decoder to get high resolution image <br>
 </p>
 <p>Finally, let’s try to implement <code>StableDiffusionPipeline</code> using these core components. Let’s call our pipeline as <code>SDPipeline</code></p>
-<section id="intialize-models" class="level2" data-number="5.1">
-<h2 data-number="5.1" class="anchored" data-anchor-id="intialize-models"><span class="header-section-number">5.1</span> Intialize models</h2>
+<section id="initialize-models" class="level2" data-number="5.1">
+<h2 data-number="5.1" class="anchored" data-anchor-id="initialize-models"><span class="header-section-number">5.1</span> Initialize models</h2>
 <p>First lets import the model required from diffusers and transformers library. We then create a class <code>SDPipeline</code> and the <code>__init__</code> method takes model_path as input which in our case is <code>CompVis/stable-diffusion-v1-4</code></p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb38" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb38-1"><span class="im" style="color: #00769E;">from</span> transformers <span class="im" style="color: #00769E;">import</span> CLIPTextModel, CLIPTokenizer</span>
@@ -1474,8 +2299,8 @@ Now that we have understood the core components of the StableDiffusion, let’s 
 </section>
 <section id="conclusion" class="level1" data-number="6">
 <h1 data-number="6"><span class="header-section-number">6</span> Conclusion</h1>
-<p>In this post, we have covered a brief introduction of Stable diffusion. After that, in later sections we understood each components of the Stable Diffusion model along with code. At the end, we implemented <code>SDPipeline</code> using the core components, generated images for multiple prompts and also visualized the images generated at particular timesteps.</p>
-<p>I hope you enjoyed reading it. If there is any feedback, feel free to reach out on <a href="https://www.linkedin.com/in/prajwal-s-1416061b3/">Linkedin</a> or on <a href="prajwalsuresh13@gmail.com">mail</a></p>
+<p>In this post, we have covered a brief introduction of Stable diffusion. After that, in later sections we understood each components of the Stable Diffusion model along with code. At the end, we implemented <code>SDPipeline</code> using the core components, generated images for multiple prompts and also visualized the images generated at particular timesteps.. In the <a href="https://prajwal-suresh13.github.io/website/posts/2022-11-22-StableDiffusionVariations/02_stable_diffusion_variations.html">next post</a> we will be looking into additional functionality such as Negative prompt, Image to Image and Textual Inversion</p>
+<p>I hope you enjoyed reading it. If there is any feedback, feel free to reach out on <a href="https://www.linkedin.com/in/prajwal-s-1416061b3/">LinkedIn</a> or on <a href="mailto:prajwalsuresh13@gmail.com">mail</a></p>
 </section>
 <section id="references" class="level1" data-number="7">
 <h1 data-number="7"><span class="header-section-number">7</span> References</h1>
