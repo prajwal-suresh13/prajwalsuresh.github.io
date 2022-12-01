@@ -6,15 +6,15 @@
       version="2.0">
 <channel>
 <title>Prajwal Suresh</title>
-<link>https://prajwalsuresh.com/blog.html</link>
-<atom:link href="https://prajwalsuresh.com/blog.xml" rel="self" type="application/rss+xml"/>
+<link>https://prajwal-suresh13.com/blog.html</link>
+<atom:link href="https://prajwal-suresh13.com/blog.xml" rel="self" type="application/rss+xml"/>
 <description>Prajwal&#39;s personal website</description>
 <generator>quarto-1.2.269</generator>
 <lastBuildDate>Wed, 30 Nov 2022 18:30:00 GMT</lastBuildDate>
 <item>
   <title>Stable diffusion - Dreambooth</title>
   <dc:creator>Prajwal Suresh</dc:creator>
-  <link>https://prajwalsuresh.com/posts/2022-12-01-Dreambooth/03_pintu_dreambooth.html</link>
+  <link>https://prajwal-suresh13.com/posts/2022-12-01-Dreambooth/03_pintu_dreambooth.html</link>
   <description><![CDATA[ 
 
 
@@ -24,7 +24,7 @@
 </blockquote>
 <br>
 <div data-align="center">
-<p><a href="https://colab.research.google.com/github/prajwal-suresh13/diffusion/blob/master/03_pintu_dreambooth.ipynb"> <img src="https://prajwalsuresh.com/posts/2022-12-01-Dreambooth/https:/colab.research.google.com/assets/colab-badge.svg" width="150"> </a></p>
+<p><a href="https://colab.research.google.com/github/prajwal-suresh13/diffusion/blob/master/03_pintu_dreambooth.ipynb"> <img src="https://prajwal-suresh13.com/posts/2022-12-01-Dreambooth/https:/colab.research.google.com/assets/colab-badge.svg" width="150"> </a></p>
 </div>
 <p><br></p>
 <p>This is the third post on Stable Diffusion. Check out the previous posts through links below if you haven’t read them yet <br><br> 1. <strong>Part 1</strong> - <a href="https://prajwal-suresh13.github.io/website/posts/2022-11-22-StableDiffusionIntro/01_stable_diffusion_introduction.html">Stable diffusion - Introduction</a>.<br> 2. <strong>Part 2</strong> - <a href="https://prajwal-suresh13.github.io/website/posts/2022-11-22-StableDiffusionVariations/02_stable_diffusion_variations.html">Stable diffusion - Negative Prompt, Image to Image &amp; Textual Inversion</a></p>
@@ -35,13 +35,13 @@
 <p>Stable Diffusion results are amazing. But what if you want to generate images of subjects that are personal to you. Can it render images of your cute pet dog having fun at the beach? What about you being the main character of superhero movie saving the World?. Yes, you absolutely can personalize the Stable Diffusion model using Dreambooth</p>
 <figure align="center" class="figure">
 <figure class="figure">
-<img src="https://prajwalsuresh.com/posts/2022-12-01-Dreambooth/https:/tryolabs.com/assets/blog/2022-10-25-the-guide-to-fine-tuning-stable-diffusion-with-your-own-images/stable-diffusion21-d3f64be213.jpg" width="380" height="280" style="float:right" class="figure-img">
+<img src="https://prajwal-suresh13.com/posts/2022-12-01-Dreambooth/https:/tryolabs.com/assets/blog/2022-10-25-the-guide-to-fine-tuning-stable-diffusion-with-your-own-images/stable-diffusion21-d3f64be213.jpg" width="380" height="280" style="float:right" class="figure-img">
 <figcaption class="figure-caption">
 <a href="https://tryolabs.com/blog/2022/10/25/the-guide-to-fine-tuning-stable-diffusion-with-your-own-images">Credits</a>
 </figcaption>
 </figure>
 <figure class="figure">
-<img src="https://prajwalsuresh.com/posts/2022-12-01-Dreambooth/02.png" width="280" height="280" style="float:left" class="figure-img">
+<img src="https://prajwal-suresh13.com/posts/2022-12-01-Dreambooth/02.png" width="280" height="280" style="float:left" class="figure-img">
 </figure>
 </figure>
 <p>Dreambooth is an approach to teach a new concept by fine-tuning a pretrained text-to-image model such that it binds a unique token with the new concept of images. If you are aware of fine-tuning vision models, you might be thinking at this point that it will take hundreds of images and hours of training to fine-tune Stable Diffusion model, but to our surprise only a minimum of 5 images of the new subject is required!</p>
@@ -68,7 +68,7 @@
     </style>
 
 <figure align="center" class="parent figure">
-<img class="image1 figure-img" src="https://prajwalsuresh.com/posts/2022-12-01-Dreambooth/https:/encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQrC5Tpk9HcrkzqNa9TnHv5fkwvD8XOqjjAmv0mFMbo&amp;s" width="800" height="450"> <img class="image2 figure-img" src="https://prajwalsuresh.com/posts/2022-12-01-Dreambooth/https:/dreambooth.github.io/DreamBooth_files/system.png" width="700">
+<img class="image1 figure-img" src="https://prajwal-suresh13.com/posts/2022-12-01-Dreambooth/https:/encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQrC5Tpk9HcrkzqNa9TnHv5fkwvD8XOqjjAmv0mFMbo&amp;s" width="800" height="450"> <img class="image2 figure-img" src="https://prajwal-suresh13.com/posts/2022-12-01-Dreambooth/https:/dreambooth.github.io/DreamBooth_files/system.png" width="700">
 <figcaption align="center" class="figure-caption">
 <h4 class="anchored" data-anchor-id="what-is-dreambooth">
 Fig 1: Dreambooth approach <a href="https://dreambooth.github.io/">(Image Credit)</a>
@@ -271,7 +271,7 @@ Login successful</code></pre>
 <div class="sourceCode cell-code" id="cb14" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1">images <span class="op" style="color: #5E5E5E;">=</span>[Image.<span class="bu" style="color: null;">open</span>(train_dataset.images[i]).resize((<span class="dv" style="color: #AD0000;">256</span>,<span class="dv" style="color: #AD0000;">256</span>)).convert(<span class="st" style="color: #20794D;">"RGB"</span>) <span class="cf" style="color: #003B4F;">for</span> i <span class="kw" style="color: #003B4F;">in</span> <span class="bu" style="color: null;">range</span>(<span class="bu" style="color: null;">len</span>(train_dataset))]</span>
 <span id="cb14-2">image_grid(images, rows<span class="op" style="color: #5E5E5E;">=</span><span class="dv" style="color: #AD0000;">1</span>, cols<span class="op" style="color: #5E5E5E;">=</span><span class="bu" style="color: null;">len</span>(train_dataset))</span></code></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="18">
-<p><img src="https://prajwalsuresh.com/posts/2022-12-01-Dreambooth/03_pintu_dreambooth_files/figure-html/cell-13-output-1.png" class="img-fluid"></p>
+<p><img src="https://prajwal-suresh13.com/posts/2022-12-01-Dreambooth/03_pintu_dreambooth_files/figure-html/cell-13-output-1.png" class="img-fluid"></p>
 </div>
 </div>
 <figcaption align="center">
@@ -424,7 +424,7 @@ Fig 2: Images used to train Dreambooth model
 </script>
 </div>
 <div class="cell-output cell-output-display" data-execution_count="17">
-<p><img src="https://prajwalsuresh.com/posts/2022-12-01-Dreambooth/03_pintu_dreambooth_files/figure-html/cell-19-output-4.png" class="img-fluid"></p>
+<p><img src="https://prajwal-suresh13.com/posts/2022-12-01-Dreambooth/03_pintu_dreambooth_files/figure-html/cell-19-output-4.png" class="img-fluid"></p>
 </div>
 </div>
 <figcaption align="center">
@@ -467,7 +467,7 @@ Fig 3: A beautiful portrait of a cute sks dog, beautiful detailed eyes, golden h
 </script>
 </div>
 <div class="cell-output cell-output-display" data-execution_count="21">
-<p><img src="https://prajwalsuresh.com/posts/2022-12-01-Dreambooth/03_pintu_dreambooth_files/figure-html/cell-20-output-4.png" class="img-fluid"></p>
+<p><img src="https://prajwal-suresh13.com/posts/2022-12-01-Dreambooth/03_pintu_dreambooth_files/figure-html/cell-20-output-4.png" class="img-fluid"></p>
 </div>
 </div>
 <figcaption align="center">
@@ -508,7 +508,7 @@ Fig 4: Portrait of a sks dog wearing a hat, realism, realistic, photorealism, f 
 </script>
 </div>
 <div class="cell-output cell-output-display" data-execution_count="29">
-<p><img src="https://prajwalsuresh.com/posts/2022-12-01-Dreambooth/03_pintu_dreambooth_files/figure-html/cell-21-output-4.png" class="img-fluid"></p>
+<p><img src="https://prajwal-suresh13.com/posts/2022-12-01-Dreambooth/03_pintu_dreambooth_files/figure-html/cell-21-output-4.png" class="img-fluid"></p>
 </div>
 </div>
 <figcaption align="center">
@@ -549,7 +549,7 @@ Fig 5: sks dog as a realistic fantasy knight, closeup portrait art by donato gia
 </script>
 </div>
 <div class="cell-output cell-output-display" data-execution_count="25">
-<p><img src="https://prajwalsuresh.com/posts/2022-12-01-Dreambooth/03_pintu_dreambooth_files/figure-html/cell-22-output-4.png" class="img-fluid"></p>
+<p><img src="https://prajwal-suresh13.com/posts/2022-12-01-Dreambooth/03_pintu_dreambooth_files/figure-html/cell-22-output-4.png" class="img-fluid"></p>
 </div>
 </div>
 <figcaption align="center">
@@ -590,7 +590,7 @@ Fig 6 : White sks dog, with reflection in the puddle, foggy old forest, very det
 </script>
 </div>
 <div class="cell-output cell-output-display" data-execution_count="36">
-<p><img src="https://prajwalsuresh.com/posts/2022-12-01-Dreambooth/03_pintu_dreambooth_files/figure-html/cell-23-output-4.png" class="img-fluid"></p>
+<p><img src="https://prajwal-suresh13.com/posts/2022-12-01-Dreambooth/03_pintu_dreambooth_files/figure-html/cell-23-output-4.png" class="img-fluid"></p>
 </div>
 </div>
 <figcaption align="center">
@@ -640,7 +640,7 @@ Fig 7: Framed renaissance portrait of a sks dog
 </script>
 </div>
 <div class="cell-output cell-output-display" data-execution_count="37">
-<p><img src="https://prajwalsuresh.com/posts/2022-12-01-Dreambooth/03_pintu_dreambooth_files/figure-html/cell-24-output-7.png" class="img-fluid"></p>
+<p><img src="https://prajwal-suresh13.com/posts/2022-12-01-Dreambooth/03_pintu_dreambooth_files/figure-html/cell-24-output-7.png" class="img-fluid"></p>
 </div>
 </div>
 <figcaption align="center">
@@ -689,7 +689,7 @@ Fig 8: A sks dog as god with a radiant halo, wings, detailed face, gorgeous, flo
 </script>
 </div>
 <div class="cell-output cell-output-display" data-execution_count="38">
-<p><img src="https://prajwalsuresh.com/posts/2022-12-01-Dreambooth/03_pintu_dreambooth_files/figure-html/cell-25-output-7.png" class="img-fluid"></p>
+<p><img src="https://prajwal-suresh13.com/posts/2022-12-01-Dreambooth/03_pintu_dreambooth_files/figure-html/cell-25-output-7.png" class="img-fluid"></p>
 </div>
 </div>
 <figcaption align="center">
@@ -802,7 +802,7 @@ Fig 9: A sks dog as god with a radiant halo, wings, detailed face, gorgeous, flo
 <div class="cell-output cell-output-display" data-execution_count="22">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="https://prajwalsuresh.com/posts/2022-12-01-Dreambooth/03_pintu_dreambooth_files/figure-html/cell-34-output-3.png" class="img-fluid figure-img"></p>
+<p><img src="https://prajwal-suresh13.com/posts/2022-12-01-Dreambooth/03_pintu_dreambooth_files/figure-html/cell-34-output-3.png" class="img-fluid figure-img"></p>
 </figure>
 </div>
 </div>
@@ -826,14 +826,14 @@ Fig 9: A sks dog as god with a radiant halo, wings, detailed face, gorgeous, flo
 
  ]]></description>
   <category>Stable Diffusion</category>
-  <guid>https://prajwalsuresh.com/posts/2022-12-01-Dreambooth/03_pintu_dreambooth.html</guid>
+  <guid>https://prajwal-suresh13.com/posts/2022-12-01-Dreambooth/03_pintu_dreambooth.html</guid>
   <pubDate>Wed, 30 Nov 2022 18:30:00 GMT</pubDate>
-  <media:content url="https://prajwalsuresh.com/posts/2022-12-01-Dreambooth/01.png" medium="image" type="image/png" height="148" width="144"/>
+  <media:content url="https://prajwal-suresh13.com/posts/2022-12-01-Dreambooth/01.png" medium="image" type="image/png" height="148" width="144"/>
 </item>
 <item>
   <title>Stable diffusion - Negative Prompt, Image to Image &amp; Textual Inversion</title>
   <dc:creator>Prajwal Suresh</dc:creator>
-  <link>https://prajwalsuresh.com/posts/2022-11-24-StableDiffusionVariations/02_stable_diffusion_variations.html</link>
+  <link>https://prajwal-suresh13.com/posts/2022-11-24-StableDiffusionVariations/02_stable_diffusion_variations.html</link>
   <description><![CDATA[ 
 
 
@@ -843,7 +843,7 @@ Fig 9: A sks dog as god with a radiant halo, wings, detailed face, gorgeous, flo
 </blockquote>
 <br>
 <div data-align="center">
-<p><a href="https://colab.research.google.com/github/prajwal-suresh13/diffusion/blob/master/02_stable_diffusion_variations.ipynb"> <img src="https://prajwalsuresh.com/posts/2022-11-24-StableDiffusionVariations/https:/colab.research.google.com/assets/colab-badge.svg" width="150"> </a></p>
+<p><a href="https://colab.research.google.com/github/prajwal-suresh13/diffusion/blob/master/02_stable_diffusion_variations.ipynb"> <img src="https://prajwal-suresh13.com/posts/2022-11-24-StableDiffusionVariations/https:/colab.research.google.com/assets/colab-badge.svg" width="150"> </a></p>
 </div>
 <p><br></p>
 <p>This is the second post on Stable Diffusion. Check out the previous post through link below if you haven’t read it yet <br><br> 1. <strong>Part 1</strong> - <a href="https://prajwal-suresh13.github.io/website/posts/2022-11-22-StableDiffusionIntro/01_stable_diffusion_introduction.html">Stable diffusion - Introduction</a>.<br></p>
@@ -971,7 +971,7 @@ Fig 9: A sks dog as god with a radiant halo, wings, detailed face, gorgeous, flo
 <h2 data-number="1.1" class="anchored" data-anchor-id="what-is-negative-prompt"><span class="header-section-number">1.1</span> What is Negative Prompt?</h2>
 <p>Negative prompt is an additional capability which removes anything that the user doesn’t want to see in generated images. Suppose you don’t want a particular color or particular object to be part of the generated images, you can mention it in <code>negative_prompt</code> argument in the <code>StableDiffusionPipeline</code>.</p>
 <figure align="center" class="figure">
-<img src="https://prajwalsuresh.com/posts/2022-11-24-StableDiffusionVariations/https:/miro.medium.com/max/828/0*wnoQYUZJiCwhtUTg.webp" width="800" class="figure-img">
+<img src="https://prajwal-suresh13.com/posts/2022-11-24-StableDiffusionVariations/https:/miro.medium.com/max/828/0*wnoQYUZJiCwhtUTg.webp" width="800" class="figure-img">
 <figcaption align="center" class="figure-caption">
 <h4 class="anchored">
 Fig 1 : Example for Negative Prompt <a href="https://towardsdatascience.com/stable-diffusion-using-hugging-face-variations-of-stable-diffusion-56fd2ab7a265">(Image Credit)</a>
@@ -1063,7 +1063,7 @@ else:
 <div class="cell-output cell-output-display" data-execution_count="41">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="https://prajwalsuresh.com/posts/2022-11-24-StableDiffusionVariations/02_stable_diffusion_variations_files/figure-html/cell-14-output-1.png" class="img-fluid figure-img"></p>
+<p><img src="https://prajwal-suresh13.com/posts/2022-11-24-StableDiffusionVariations/02_stable_diffusion_variations_files/figure-html/cell-14-output-1.png" class="img-fluid figure-img"></p>
 </figure>
 </div>
 </div>
@@ -1191,7 +1191,7 @@ Fig 2: Negative Prompt Results for prompt “a photo of a forest with trees and 
 <div class="cell-output cell-output-display" data-execution_count="11">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="https://prajwalsuresh.com/posts/2022-11-24-StableDiffusionVariations/02_stable_diffusion_variations_files/figure-html/cell-17-output-3.png" class="img-fluid figure-img"></p>
+<p><img src="https://prajwal-suresh13.com/posts/2022-11-24-StableDiffusionVariations/02_stable_diffusion_variations_files/figure-html/cell-17-output-3.png" class="img-fluid figure-img"></p>
 </figure>
 </div>
 </div>
@@ -1282,7 +1282,7 @@ Fig 3: Initial Image for Image To Image Pipeline
 <div class="cell-output cell-output-display" data-execution_count="14">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="https://prajwalsuresh.com/posts/2022-11-24-StableDiffusionVariations/02_stable_diffusion_variations_files/figure-html/cell-20-output-2.png" class="img-fluid figure-img"></p>
+<p><img src="https://prajwal-suresh13.com/posts/2022-11-24-StableDiffusionVariations/02_stable_diffusion_variations_files/figure-html/cell-20-output-2.png" class="img-fluid figure-img"></p>
 </figure>
 </div>
 </div>
@@ -1297,7 +1297,7 @@ Fig 4: Generated Image for Image To Image pipeline
 <span id="cb22-2">imgs <span class="op" style="color: #5E5E5E;">=</span>[img <span class="cf" style="color: #003B4F;">for</span> i <span class="kw" style="color: #003B4F;">in</span> <span class="bu" style="color: null;">range</span>(<span class="bu" style="color: null;">len</span>(prompt)) <span class="cf" style="color: #003B4F;">for</span> img <span class="kw" style="color: #003B4F;">in</span> lc.imgs[i]]</span>
 <span id="cb22-3">image_grid(imgs, rows<span class="op" style="color: #5E5E5E;">=</span>rows, cols<span class="op" style="color: #5E5E5E;">=</span>cols)</span></code></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="15">
-<p><img src="https://prajwalsuresh.com/posts/2022-11-24-StableDiffusionVariations/02_stable_diffusion_variations_files/figure-html/cell-21-output-1.png" class="img-fluid"></p>
+<p><img src="https://prajwal-suresh13.com/posts/2022-11-24-StableDiffusionVariations/02_stable_diffusion_variations_files/figure-html/cell-21-output-1.png" class="img-fluid"></p>
 </div>
 </div>
 </section>
@@ -1339,7 +1339,7 @@ Fig 4: Generated Image for Image To Image pipeline
 <div class="cell-output cell-output-display" data-execution_count="31">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="https://prajwalsuresh.com/posts/2022-11-24-StableDiffusionVariations/02_stable_diffusion_variations_files/figure-html/cell-22-output-3.png" class="img-fluid figure-img"></p>
+<p><img src="https://prajwal-suresh13.com/posts/2022-11-24-StableDiffusionVariations/02_stable_diffusion_variations_files/figure-html/cell-22-output-3.png" class="img-fluid figure-img"></p>
 </figure>
 </div>
 </div>
@@ -1362,7 +1362,7 @@ Fig 5: Initial Image of Sunflower vase
 <div class="cell-output cell-output-display" data-execution_count="57">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="https://prajwalsuresh.com/posts/2022-11-24-StableDiffusionVariations/02_stable_diffusion_variations_files/figure-html/cell-23-output-2.png" class="img-fluid figure-img"></p>
+<p><img src="https://prajwal-suresh13.com/posts/2022-11-24-StableDiffusionVariations/02_stable_diffusion_variations_files/figure-html/cell-23-output-2.png" class="img-fluid figure-img"></p>
 </figure>
 </div>
 </div>
@@ -1379,7 +1379,7 @@ Fig 6: Generated Image of Rose vase for initial image of sunflower vase and Nega
 <p>Textual Inversion is a process to teach a new word to the text model and get its embeddings close to the visual representation of the image. This is achieved by adding a new token to the vocabulary, freezing the weights of all the models except the text encoder and train with the images.</p>
 <p>This is a schematic representation of the process by the authors of the <a href="https://textual-inversion.github.io/">Textual Inversion paper</a></p>
 <figure align="center" class="figure">
-<img src="https://prajwalsuresh.com/posts/2022-11-24-StableDiffusionVariations/https:/textual-inversion.github.io/static/images/training/training.JPG" width="800" class="figure-img">
+<img src="https://prajwal-suresh13.com/posts/2022-11-24-StableDiffusionVariations/https:/textual-inversion.github.io/static/images/training/training.JPG" width="800" class="figure-img">
 <figcaption align="center" class="figure-caption">
 <h4 class="anchored" data-anchor-id="textual-inversion">
 Fig 7 : Textual Inversion diagram <a href="https://textual-inversion.github.io/">(Image Credit)</a>
@@ -1516,7 +1516,7 @@ Fig 7 : Textual Inversion diagram <a href="https://textual-inversion.github.io/"
 <div class="cell-output cell-output-display" data-execution_count="31">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="https://prajwalsuresh.com/posts/2022-11-24-StableDiffusionVariations/02_stable_diffusion_variations_files/figure-html/cell-29-output-2.png" class="img-fluid figure-img"></p>
+<p><img src="https://prajwal-suresh13.com/posts/2022-11-24-StableDiffusionVariations/02_stable_diffusion_variations_files/figure-html/cell-29-output-2.png" class="img-fluid figure-img"></p>
 </figure>
 </div>
 </div>
@@ -1544,14 +1544,14 @@ Fig 8: Using new token generated using Textual Inversion in prompt
 
  ]]></description>
   <category>Stable Diffusion</category>
-  <guid>https://prajwalsuresh.com/posts/2022-11-24-StableDiffusionVariations/02_stable_diffusion_variations.html</guid>
+  <guid>https://prajwal-suresh13.com/posts/2022-11-24-StableDiffusionVariations/02_stable_diffusion_variations.html</guid>
   <pubDate>Wed, 23 Nov 2022 18:30:00 GMT</pubDate>
-  <media:content url="https://prajwalsuresh.com/posts/2022-11-24-StableDiffusionVariations/01.png" medium="image" type="image/png" height="144" width="144"/>
+  <media:content url="https://prajwal-suresh13.com/posts/2022-11-24-StableDiffusionVariations/01.png" medium="image" type="image/png" height="144" width="144"/>
 </item>
 <item>
   <title>Stable diffusion - Introduction</title>
   <dc:creator>Prajwal Suresh</dc:creator>
-  <link>https://prajwalsuresh.com/posts/2022-11-22-StableDiffusionIntro/01_stable_diffusion_introduction.html</link>
+  <link>https://prajwal-suresh13.com/posts/2022-11-22-StableDiffusionIntro/01_stable_diffusion_introduction.html</link>
   <description><![CDATA[ 
 
 
@@ -1561,7 +1561,7 @@ Fig 8: Using new token generated using Textual Inversion in prompt
 </blockquote>
 <br>
 <div data-align="center">
-<p><a href="https://colab.research.google.com/github/prajwal-suresh13/diffusion/blob/master/01_stable_diffusion_introduction.ipynb"> <img src="https://prajwalsuresh.com/posts/2022-11-22-StableDiffusionIntro/https:/colab.research.google.com/assets/colab-badge.svg" width="150"> </a></p>
+<p><a href="https://colab.research.google.com/github/prajwal-suresh13/diffusion/blob/master/01_stable_diffusion_introduction.ipynb"> <img src="https://prajwal-suresh13.com/posts/2022-11-22-StableDiffusionIntro/https:/colab.research.google.com/assets/colab-badge.svg" width="150"> </a></p>
 </div>
 <p><br></p>
 <p>In this post I will give an introduction on using 🤗 Diffusers library to generate images using texts as input. This post is based on the knowledge acquired while doing the <a href="https://www.fast.ai/posts/part2-2022.html"><em>‘From Deep learning foundations to Stable Diffusion’</em></a> course by <a href="https://www.fast.ai/posts/part2-2022.html">FastAI</a> . The first few lessons of the FastAI course are publicly available <a href="https://www.fast.ai/posts/part2-2022-preview.html">here</a>. Until the rest of the lessons are available, you can also checkout the first part of the <a href="https://course.fast.ai/">course</a> which is one of the best Deep Learning courses</p>
@@ -1573,7 +1573,7 @@ Fig 8: Using new token generated using Textual Inversion in prompt
 <h1 data-number="1"><span class="header-section-number">1</span> What is Stable Diffusion</h1>
 <p>Stable Diffusion is a popular text-to-image model. It is a deep learning model which takes a sentence as input and generates an image which represents the text. You can find amazing examples of images generated by the model with just text as input on the <a href="https://lexica.art/">Lexica</a> website. Stable Diffusion model can also take an image and text as input, modify the provided image and generate new images based on text.</p>
 <figure align="center" class="figure">
-<img src="https://prajwalsuresh.com/posts/2022-11-22-StableDiffusionIntro/https:/pbs.twimg.com/media/FePCGVNXkAIAGG2.jpg" width="800" class="figure-img">
+<img src="https://prajwal-suresh13.com/posts/2022-11-22-StableDiffusionIntro/https:/pbs.twimg.com/media/FePCGVNXkAIAGG2.jpg" width="800" class="figure-img">
 <figcaption align="center" class="figure-caption">
 <h4 class="anchored" data-anchor-id="what-is-stable-diffusion">
 Fig 1: Stable Diffusion <a href="https://jalammar.github.io/illustrated-stable-diffusion/">(Image Credit)</a>
@@ -1740,7 +1740,7 @@ Login successful</code></pre>
 <div class="cell-output cell-output-display" data-execution_count="7">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="https://prajwalsuresh.com/posts/2022-11-22-StableDiffusionIntro/01_stable_diffusion_introduction_files/figure-html/cell-8-output-2.png" class="img-fluid figure-img"></p>
+<p><img src="https://prajwal-suresh13.com/posts/2022-11-22-StableDiffusionIntro/01_stable_diffusion_introduction_files/figure-html/cell-8-output-2.png" class="img-fluid figure-img"></p>
 </figure>
 </div>
 </div>
@@ -1774,7 +1774,7 @@ Fig 2: An example of image generated by the StableDiffusion pipeline
 <div class="cell" data-outputid="b7a342cc-679b-41b4-ac40-8f56f1898dbe">
 <div class="sourceCode cell-code" id="cb12" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1">image_grid(images, rows<span class="op" style="color: #5E5E5E;">=</span><span class="dv" style="color: #AD0000;">1</span>, cols<span class="op" style="color: #5E5E5E;">=</span><span class="dv" style="color: #AD0000;">3</span>)</span></code></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="12">
-<p><img src="https://prajwalsuresh.com/posts/2022-11-22-StableDiffusionIntro/01_stable_diffusion_introduction_files/figure-html/cell-11-output-1.png" class="img-fluid"></p>
+<p><img src="https://prajwal-suresh13.com/posts/2022-11-22-StableDiffusionIntro/01_stable_diffusion_introduction_files/figure-html/cell-11-output-1.png" class="img-fluid"></p>
 </div>
 </div>
 <figcaption align="center">
@@ -1822,7 +1822,7 @@ Fig 3: Images generated by pipeline for multiple prompts(A photograph of a dog w
 <div class="cell" data-outputid="7c4be038-55a2-499f-efd1-75559a52b693">
 <div class="sourceCode cell-code" id="cb14" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1">image_grid(images, rows<span class="op" style="color: #5E5E5E;">=</span><span class="bu" style="color: null;">len</span>(prompts),cols<span class="op" style="color: #5E5E5E;">=</span><span class="dv" style="color: #AD0000;">6</span>)</span></code></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="20">
-<p><img src="https://prajwalsuresh.com/posts/2022-11-22-StableDiffusionIntro/01_stable_diffusion_introduction_files/figure-html/cell-13-output-1.png" class="img-fluid"></p>
+<p><img src="https://prajwal-suresh13.com/posts/2022-11-22-StableDiffusionIntro/01_stable_diffusion_introduction_files/figure-html/cell-13-output-1.png" class="img-fluid"></p>
 </div>
 </div>
 <figcaption align="center">
@@ -1846,7 +1846,7 @@ Fig 4: Visualizing Diffusion steps
 <section id="autoencoder" class="level2" data-number="4.1">
 <h2 data-number="4.1" class="anchored" data-anchor-id="autoencoder"><span class="header-section-number">4.1</span> Autoencoder</h2>
 <figure align="center" class="figure">
-<img src="https://prajwalsuresh.com/posts/2022-11-22-StableDiffusionIntro/https:/d3i71xaburhd42.cloudfront.net/b1786e74e233ac21f503f59d03f6af19a3699024/2-Figure1-1.png" width="800" class="figure-img">
+<img src="https://prajwal-suresh13.com/posts/2022-11-22-StableDiffusionIntro/https:/d3i71xaburhd42.cloudfront.net/b1786e74e233ac21f503f59d03f6af19a3699024/2-Figure1-1.png" width="800" class="figure-img">
 <figcaption align="center" class="figure-caption">
 <h4 class="anchored">
 Fig 5:Autoencoder <a href="https://www.semanticscholar.org/paper/A-Better-Autoencoder-for-Image%3A-Convolutional-Zhang/b1786e74e233ac21f503f59d03f6af19a3699024">(Image Credit)</a>
@@ -1897,7 +1897,7 @@ Fig 5:Autoencoder <a href="https://www.semanticscholar.org/paper/A-Better-Autoen
 <div class="cell-output cell-output-display" data-execution_count="30">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="https://prajwalsuresh.com/posts/2022-11-22-StableDiffusionIntro/01_stable_diffusion_introduction_files/figure-html/cell-16-output-2.png" class="img-fluid figure-img"></p>
+<p><img src="https://prajwal-suresh13.com/posts/2022-11-22-StableDiffusionIntro/01_stable_diffusion_introduction_files/figure-html/cell-16-output-2.png" class="img-fluid figure-img"></p>
 </figure>
 </div>
 </div>
@@ -1908,7 +1908,7 @@ Fig 5:Autoencoder <a href="https://www.semanticscholar.org/paper/A-Better-Autoen
 <span id="cb19-3"><span class="cf" style="color: #003B4F;">for</span> c <span class="kw" style="color: #003B4F;">in</span> <span class="bu" style="color: null;">range</span>(<span class="dv" style="color: #AD0000;">4</span>):</span>
 <span id="cb19-4">    axs[c].imshow(encoded[<span class="dv" style="color: #AD0000;">0</span>][c].cpu(), cmap<span class="op" style="color: #5E5E5E;">=</span><span class="st" style="color: #20794D;">'Greys'</span>)</span></code></pre></div>
 <div class="cell-output cell-output-display">
-<p><img src="https://prajwalsuresh.com/posts/2022-11-22-StableDiffusionIntro/01_stable_diffusion_introduction_files/figure-html/cell-17-output-1.png" class="img-fluid"></p>
+<p><img src="https://prajwal-suresh13.com/posts/2022-11-22-StableDiffusionIntro/01_stable_diffusion_introduction_files/figure-html/cell-17-output-1.png" class="img-fluid"></p>
 </div>
 </div>
 <figcaption align="center">
@@ -1929,7 +1929,7 @@ Fig 6: Latent Representation of the Input image
 <div class="cell-output cell-output-display" data-execution_count="35">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="https://prajwalsuresh.com/posts/2022-11-22-StableDiffusionIntro/01_stable_diffusion_introduction_files/figure-html/cell-19-output-1.png" class="img-fluid figure-img"></p>
+<p><img src="https://prajwal-suresh13.com/posts/2022-11-22-StableDiffusionIntro/01_stable_diffusion_introduction_files/figure-html/cell-19-output-1.png" class="img-fluid figure-img"></p>
 </figure>
 </div>
 </div>
@@ -1940,7 +1940,7 @@ Fig 6: Latent Representation of the Input image
 <h2 data-number="4.2" class="anchored" data-anchor-id="text-encoder"><span class="header-section-number">4.2</span> Text Encoder</h2>
 <p>Deep Learning models only understand numbers and not text. So inorder to convert the text data into numbers which our models can work with Tokenizers and Text Encoders are used</p>
 <figure align="center" class="figure">
-<img src="https://prajwalsuresh.com/posts/2022-11-22-StableDiffusionIntro/https:/developers.google.com/static/machine-learning/guides/text-classification/images/EmbeddingLayer.png" width="800" class="figure-img">
+<img src="https://prajwal-suresh13.com/posts/2022-11-22-StableDiffusionIntro/https:/developers.google.com/static/machine-learning/guides/text-classification/images/EmbeddingLayer.png" width="800" class="figure-img">
 <figcaption align="center" class="figure-caption">
 <h4 class="anchored">
 Fig 7 : Tokenizer and Text Encoder <a href="https://developers.google.com/machine-learning/guides/text-classification/step-3">(Image Credit)</a>
@@ -1956,7 +1956,7 @@ Fig 7 : Tokenizer and Text Encoder <a href="https://developers.google.com/machin
 <h3 data-number="4.2.2" class="anchored" data-anchor-id="how-clip-model-works"><span class="header-section-number">4.2.2</span> How CLIP model works</h3>
 <p>The embedding from the text encoder in the Fig 7 represents the meaning of each word in the given prompt. But we also need the same embeddings to represent an image which is described in the prompt. We need a model that connects text and images. CLIP model acts as bridge that connects texts and images</p>
 <figure align="center" class="figure">
-<img src="https://prajwalsuresh.com/posts/2022-11-22-StableDiffusionIntro/https:/cdn.dida.do/blog/20210621_fg_clip/contrastive_pretraining.png" width="800" class="figure-img">
+<img src="https://prajwal-suresh13.com/posts/2022-11-22-StableDiffusionIntro/https:/cdn.dida.do/blog/20210621_fg_clip/contrastive_pretraining.png" width="800" class="figure-img">
 <figcaption align="center" class="figure-caption">
 <h4 class="anchored">
 Fig 8 : CLIP model <h7><a href="https://arxiv.org/abs/2103.00020">(Image Credit)</a></h7>
@@ -2042,7 +2042,7 @@ tensor(49407) &lt;|endoftext|&gt;</code></pre>
 <p>UNet model takes three inputs: <br> 1. Noisy latent or Noise - If initial image is provided, noisy latents are produced by adding VAE encoder’s latents and noise otherwise it takes pure noise as input and produces new image based on the textual description<br> 2. Timestep - Timestep is the number of times the diffusion process is repeated. It takes as input the current timestep<br> 3. Embeddings - Embeddings generated by CLIP for the input prompts and unconditional embeddings<br></p>
 <p>The UNet model predicts the noise which is then subtracted from the Noisy latents. This process is repeated for the timesteps mentioned and at the end, the latent outputs produced are passed to VAE’s decoder to generate High-resolution image</p>
 <figure align="center" class="figure">
-<img src="https://prajwalsuresh.com/posts/2022-11-22-StableDiffusionIntro/https:/miro.medium.com/max/720/0*4CMZbQvwXaSjQRRX.png" width="800" class="figure-img">
+<img src="https://prajwal-suresh13.com/posts/2022-11-22-StableDiffusionIntro/https:/miro.medium.com/max/720/0*4CMZbQvwXaSjQRRX.png" width="800" class="figure-img">
 <figcaption align="center" class="figure-caption">
 <h4 class="anchored">
 Fig 9 : UNet <a href="https://towardsdatascience.com/stable-diffusion-using-hugging-face-501d8dbdd8#:~:text=Stable%20diffusion%20only%20uses%20a,are%20similar%20in%20latent%20space.">(Image Credit)</a>
@@ -2080,7 +2080,7 @@ Fig 9 : UNet <a href="https://towardsdatascience.com/stable-diffusion-using-hugg
 <div class="cell-output cell-output-display" data-execution_count="46">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="https://prajwalsuresh.com/posts/2022-11-22-StableDiffusionIntro/01_stable_diffusion_introduction_files/figure-html/cell-28-output-1.png" class="img-fluid figure-img"></p>
+<p><img src="https://prajwal-suresh13.com/posts/2022-11-22-StableDiffusionIntro/01_stable_diffusion_introduction_files/figure-html/cell-28-output-1.png" class="img-fluid figure-img"></p>
 </figure>
 </div>
 </div>
@@ -2105,7 +2105,7 @@ Fig 9 : UNet <a href="https://towardsdatascience.com/stable-diffusion-using-hugg
 <div class="cell-output cell-output-display" data-execution_count="47">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="https://prajwalsuresh.com/posts/2022-11-22-StableDiffusionIntro/01_stable_diffusion_introduction_files/figure-html/cell-29-output-1.png" class="img-fluid figure-img"></p>
+<p><img src="https://prajwal-suresh13.com/posts/2022-11-22-StableDiffusionIntro/01_stable_diffusion_introduction_files/figure-html/cell-29-output-1.png" class="img-fluid figure-img"></p>
 </figure>
 </div>
 </div>
@@ -2116,7 +2116,7 @@ Fig 9 : UNet <a href="https://towardsdatascience.com/stable-diffusion-using-hugg
 <section id="implementing-stablediffusionpipeline" class="level1" data-number="5">
 <h1 data-number="5"><span class="header-section-number">5</span> Implementing StableDiffusionPipeline</h1>
 <figure align="center" class="figure">
-<img src="https://prajwalsuresh.com/posts/2022-11-22-StableDiffusionIntro/https:/miro.medium.com/max/720/0*z5eQUBRBVtgD3Vgv.png" width="800" class="figure-img">
+<img src="https://prajwal-suresh13.com/posts/2022-11-22-StableDiffusionIntro/https:/miro.medium.com/max/720/0*z5eQUBRBVtgD3Vgv.png" width="800" class="figure-img">
 <figcaption align="center" class="figure-caption">
 <h4 class="anchored">
 Fig 10 : Diffusion process <a href="https://medium.com/towards-data-science/stable-diffusion-using-hugging-face-501d8dbdd8">(Image Credit)</a>
@@ -2284,7 +2284,7 @@ Now that we have understood the core components of the StableDiffusion, let’s 
 <div class="sourceCode cell-code" id="cb48" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb48-1">imgs <span class="op" style="color: #5E5E5E;">=</span> [create_image(i) <span class="cf" style="color: #003B4F;">for</span> i <span class="kw" style="color: #003B4F;">in</span> images]</span>
 <span id="cb48-2">image_grid(imgs, rows<span class="op" style="color: #5E5E5E;">=</span><span class="dv" style="color: #AD0000;">1</span>, cols <span class="op" style="color: #5E5E5E;">=</span> <span class="bu" style="color: null;">len</span>(imgs))</span></code></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="18">
-<p><img src="https://prajwalsuresh.com/posts/2022-11-22-StableDiffusionIntro/01_stable_diffusion_introduction_files/figure-html/cell-40-output-1.png" class="img-fluid"></p>
+<p><img src="https://prajwal-suresh13.com/posts/2022-11-22-StableDiffusionIntro/01_stable_diffusion_introduction_files/figure-html/cell-40-output-1.png" class="img-fluid"></p>
 </div>
 </div>
 <div class="cell" data-outputid="ed34d5b0-081f-4831-92af-41b3dc9fd76a">
@@ -2292,14 +2292,14 @@ Now that we have understood the core components of the StableDiffusion, let’s 
 <span id="cb49-2">imgs <span class="op" style="color: #5E5E5E;">=</span>[img <span class="cf" style="color: #003B4F;">for</span> i <span class="kw" style="color: #003B4F;">in</span> <span class="bu" style="color: null;">range</span>(<span class="bu" style="color: null;">len</span>(prompts)) <span class="cf" style="color: #003B4F;">for</span> img <span class="kw" style="color: #003B4F;">in</span> lc.imgs[i]]</span>
 <span id="cb49-3">image_grid(imgs, rows<span class="op" style="color: #5E5E5E;">=</span>rows, cols<span class="op" style="color: #5E5E5E;">=</span>cols)</span></code></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="19">
-<p><img src="https://prajwalsuresh.com/posts/2022-11-22-StableDiffusionIntro/01_stable_diffusion_introduction_files/figure-html/cell-41-output-1.png" class="img-fluid"></p>
+<p><img src="https://prajwal-suresh13.com/posts/2022-11-22-StableDiffusionIntro/01_stable_diffusion_introduction_files/figure-html/cell-41-output-1.png" class="img-fluid"></p>
 </div>
 </div>
 </section>
 </section>
 <section id="conclusion" class="level1" data-number="6">
 <h1 data-number="6"><span class="header-section-number">6</span> Conclusion</h1>
-<p>In this post, we have covered a brief introduction of Stable diffusion. After that, in later sections we understood each components of the Stable Diffusion model along with code. At the end, we implemented <code>SDPipeline</code> using the core components, generated images for multiple prompts and also visualized the images generated at particular timesteps.. In the <a href="https://prajwal-suresh13.github.io/website/posts/2022-11-22-StableDiffusionVariations/02_stable_diffusion_variations.html">next post</a> we will be looking into additional functionality such as Negative prompt, Image to Image and Textual Inversion</p>
+<p>In this post, we have covered a brief introduction of Stable diffusion. After that, in later sections we understood each components of the Stable Diffusion model along with code. At the end, we implemented <code>SDPipeline</code> using the core components, generated images for multiple prompts and also visualized the images generated at particular timesteps.. In the <a href="https://prajwal-suresh13.github.io/website/posts/2022-11-24-StableDiffusionVariations/02_stable_diffusion_variations.html">next post</a> we will be looking into additional functionality such as Negative prompt, Image to Image and Textual Inversion</p>
 <p>I hope you enjoyed reading it. If there is any feedback, feel free to reach out on <a href="https://www.linkedin.com/in/prajwal-s-1416061b3/">LinkedIn</a> or on <a href="mailto:prajwalsuresh13@gmail.com">mail</a></p>
 </section>
 <section id="references" class="level1" data-number="7">
@@ -2314,9 +2314,9 @@ Now that we have understood the core components of the StableDiffusion, let’s 
 
  ]]></description>
   <category>Stable Diffusion</category>
-  <guid>https://prajwalsuresh.com/posts/2022-11-22-StableDiffusionIntro/01_stable_diffusion_introduction.html</guid>
+  <guid>https://prajwal-suresh13.com/posts/2022-11-22-StableDiffusionIntro/01_stable_diffusion_introduction.html</guid>
   <pubDate>Mon, 21 Nov 2022 18:30:00 GMT</pubDate>
-  <media:content url="https://prajwalsuresh.com/posts/2022-11-22-StableDiffusionIntro/01.png" medium="image" type="image/png" height="144" width="144"/>
+  <media:content url="https://prajwal-suresh13.com/posts/2022-11-22-StableDiffusionIntro/01.png" medium="image" type="image/png" height="144" width="144"/>
 </item>
 </channel>
 </rss>
