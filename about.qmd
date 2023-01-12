@@ -33,11 +33,12 @@ Hi there, I'm Prajwal Suresh. I'm currently exploring Deep learning, machine lea
 *Tata Consultancy Services Private Limited, Bengaluru, India*
 :::
 ::: {.text-end}
-August 2021 - Present
+August 2021 - December 2022
 :::
 :::
-- Managing 275 nodes Hadoop Cloudera cluster, handling 10PiB of data and managing 250+ users effectively
-- Automating tasks using Ansible and project space creation for users
+- Knowledge of Hadoop Architecture and various components such as HDFS, YARN, MapReduce concepts
+- Used Spark for data transformation of large datasets
+- Experience in monitoring Hadoop cluster by gathering and analyzing the existing infrastructure using Cloudera Manager
 
 
 # Skills
