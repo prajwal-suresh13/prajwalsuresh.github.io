@@ -36,8 +36,8 @@ Hi there, I'm Prajwal Suresh. I'm currently exploring Deep learning, machine lea
 August 2021 - December 2022
 :::
 :::
-- Knowledge of Hadoop Architecture and various components such as HDFS, YARN, MapReduce concepts
-- Used Spark for data transformation of large datasets
+- Knowledge of Hadoop Architecture and various components such as HDFS, YARN, MapReduce and Hive concepts
+- Used Spark to process data and store it on HDFS in parquet format
 - Experience in monitoring Hadoop cluster by gathering and analyzing the existing infrastructure using Cloudera Manager
 
 
@@ -50,17 +50,19 @@ August 2021 - December 2022
 :::
 :::
 
+
+
 ::: {.d-flex .justify-content-between}
 ::: {}
-**Machine Learning**  
-*PyTorch, fastai, Scikit-Learn, Pandas, Numpy, MatplotLib, OpenCV, HuggingFace*
+**Big Data**  
+*Spark, ADLS Gen 2, Azure Data FActory, Azure Databricks, Data Lakehouse, Cloudera, Docker, Linux, SQL*
 :::
 :::
 
 ::: {.d-flex .justify-content-between}
 ::: {}
-**Big Data**  
-*Hadoop, Spark, Docker, Airflow, Cloudera, Cloud, Linux, SQL, Ansible*
+**Machine Learning**  
+*PyTorch, fastai, Scikit-Learn, Pandas, Numpy, MatplotLib, OpenCV, HuggingFace*
 :::
 :::
 
