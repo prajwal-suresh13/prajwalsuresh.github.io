@@ -19,9 +19,8 @@ comments: false
 page-layout: full
 ---
 
-Hi there, I'm Prajwal Suresh. I'm currently exploring Deep learning, machine learning and data engineering technologies. This is where I write about my learning journey and explorations
+Hi there, I'm Prajwal Suresh. I'm currently exploring Data Engineering, Deep learning, machine learning  technologies. This is where I write about my learning journey and explorations
 
-<!-- I'm an experienced Data Scientist with specialized skills in machine learning-based solutions. I enjoy staying on top of cutting-edge data technologies, including big data platforms, deep learning, optimization methods, and business analytics. My current work involves building data-driven products to enable smarter recommendations for Microsoft Partners, M365 service administrators and end-users to ensure the best usage of M365 services. Before that, I have experience working in various verticals like agricultural technology, pharmaceuticals, retail, e-commerce, and ride-sharing business model. -->
 
 ::::{.panel-tabset}
 
@@ -29,24 +28,43 @@ Hi there, I'm Prajwal Suresh. I'm currently exploring Deep learning, machine lea
 
 ::: {.d-flex .justify-content-between}
 ::: {}
-**Big Data Engineer**  
+**Azure Data Engineer**  
+*Networth Data Products Private Limited, Bengaluru, India*
+:::
+::: {.text-end}
+January 2023 - Present
+:::
+:::
+- Served as an Data Engineer, implementing modern data solutions for data extraction, transformation and loading data from source systems into the Azure Data Lake using Azure cloud services.
+- Orchestrated end-to-end data pipelines using Azure Data Factory, integrating Azure Data Lake for storage, Azure Databricks for data transformation, and Azure Synapse for serving data to dashboards and downstream teams, reducing manual intervention by 60%
+- Migrated legacy data pipelines to Medallion architecture, improving data quality, scalability, processing time and consistency, reducing data ingestion time by 30% and operational costs by 50%
+- Implemented incremental data processing using SQL and PySpark on Azure Databricks, reducing storage and compute costs by 20%
+- Utilized Delta Lake’s schema evolution capabilities to adapt to changing data, ensuring data pipelines remained scalable and flexible and reducing schema management overhead 
+- Developed generic pipeline templates to get data from various types of source (API, SQL, Excel, ADLS, CSV, Parquet)
+- Collaborated with business stakeholders regularly to gather and refine data requirements, ensuring 100% alignment between data outputs and business objectives.
+- Partnered with Power BI developers to translate business requirement into actionable Gold layer datasets, enabling the creation of 20+ interactive dashboards. 
+
+::: {.d-flex .justify-content-between}
+::: {}
+**Assistant System Engineer**  
 *Tata Consultancy Services Private Limited, Bengaluru, India*
 :::
 ::: {.text-end}
-August 2021 - December 2022
+August 2021 - January 2023
 :::
 :::
-- Knowledge of Hadoop Architecture and various components such as HDFS, YARN, MapReduce and Hive concepts
-- Used Spark to process data and store it on HDFS in parquet format
-- Experience in monitoring Hadoop cluster by gathering and analyzing the existing infrastructure using Cloudera Manager
+- Developed ETL pipelines in Azure Data Factory, improving data availability by 40%
+- Involved in migration of on-premises databases to Azure SQL Database, ensuring data integrity and achieving 20% improvement in query performance.
+- Automated data pipeline monitoring and error handling, achieving 99% pipeline success rate
+- Developed PySpark and SQL scripts in Azure Databricks to transform data
 
 
 # Skills
 
 ::: {.d-flex .justify-content-between}
 ::: {}
-**Programming**  
-*Python, C++, Java*
+**Programming & Scripting**  
+*Python, C++, SQL*
 :::
 :::
 
@@ -54,8 +72,8 @@ August 2021 - December 2022
 
 ::: {.d-flex .justify-content-between}
 ::: {}
-**Big Data**  
-*Spark, ADLS Gen 2, Azure Data FActory, Azure Databricks, Data Lakehouse, Cloudera, Docker, Linux, SQL*
+**Cloud**  
+*Microsoft Azure Cloud Platform, Azure Data Factory, Azure Databricks, ADLS Gen 2, Azure Synapse, Azure Logic app, Azure Key Vault*
 :::
 :::
 
@@ -69,7 +87,7 @@ August 2021 - December 2022
 ::: {.d-flex .justify-content-between}
 ::: {}
 **Web Development**  
-*Django, Flask, PHP, HTML, CSS, JavaScript*
+*Django, Flask, HTML, CSS*
 :::
 :::
 
